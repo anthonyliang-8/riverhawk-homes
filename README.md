@@ -2,5 +2,6 @@
 
 ## Setup & Run
 
-`npm install`
-`npm run dev`
+- Install dependencies from package.json by running `npm install`\
+
+- Enter `npm run dev` to run environment
