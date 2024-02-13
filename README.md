@@ -1,4 +1,4 @@
-# Riverhawk-Housing
+# Rate-My-Housing
 
 ## Setup & Run
 
