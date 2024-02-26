@@ -1,30 +1,25 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
     Box,
     Flex,
     Spacer,
-    Link,
     Button,
-    useColorMode
+    useColorMode,
 } from "@chakra-ui/react";
 
 const Navbar = () => {
-    {/*https://chakra-ui.com/docs/styled-system/color-mode#usecolormode*/}
-    const { colorMode, toggleColorMode } = useColorMode();
+    const { colorMode, toggleColorMode } = useColorMode(); {/*https://chakra-ui.com/docs/styled-system/color-mode#usecolormode*/ }
 
     return (
         <Box boxShadow="md" borderRadius={"12px"}>
             <Flex p="4" alignItems="center">
                 <Box>
-                    <Link href="/" fontSize="xl" fontWeight="bold">
-                        RateMyHousing
-                    </Link>
+                    <Link to="/">Riverhawk Homes</Link>
                 </Box>
                 <Spacer />
                 <Box>
-                    <Link href="/login" mr="4">
-                        Login
-                    </Link>
+                    <Link to="/login">Login</Link>
                     <Button onClick={toggleColorMode}>
                         {colorMode === "light" ? "Dark" : "Light"} {/* replace with icons */}
                     </Button>
