@@ -1,7 +1,7 @@
 import './App.css'
 import Navbar from './components/Navbar'
-import Login from './components/Login'
-import Home from './components/Home';
+import Login from './pages/Login'
+import Home from './pages/Home';
 import { Router, Routes, Route } from 'react-router-dom';
 
 // APP.JSX IS THE TOP MOST COMPONENT TO WRAP ALL OTHER COMPONENTS
