@@ -4,7 +4,9 @@
 A web application that allows students, whether incoming, current or past students, a way to leave and look at reviews for dorms provided by UMass Lowell.
 ## Stack
 React.js
+
 Chakra UI
+
 Firebase
 - User Auth (TBD)
 - Firestore
