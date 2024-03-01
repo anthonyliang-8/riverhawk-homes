@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../css/styles.css'
 import Dorm from './Dorm';
 
 function Listings() {

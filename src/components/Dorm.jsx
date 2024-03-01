@@ -4,7 +4,7 @@ const Dorm = ({ name, campus, price_range, rating, photo }) => {
   return (
     <Box
       display="flex"
-      maxW={"xs"}
+      width={'xs'}
       p={4}
       rounded="md"
       bg="white"

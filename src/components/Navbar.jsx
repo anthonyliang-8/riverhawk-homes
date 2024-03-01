@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 
 const Navbar = () => {
-    const { colorMode, toggleColorMode } = useColorMode(); {/*https://chakra-ui.com/docs/styled-system/color-mode#usecolormode*/ }
 
     return (
         <Box boxShadow="md" borderRadius={"12px"}>
@@ -20,9 +19,6 @@ const Navbar = () => {
                 <Spacer />
                 <Box>
                     <Link to="/login">Login</Link>
-                    <Button onClick={toggleColorMode}>
-                        {colorMode === "light" ? "Dark" : "Light"} {/* replace with icons */}
-                    </Button>
                 </Box>
             </Flex>
         </Box>
