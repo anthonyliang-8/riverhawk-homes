@@ -1,6 +1,7 @@
 import './App.css'
 import Navbar from './components/Navbar'
 import Login from './pages/Login'
+import SignUp from './pages/Signup';
 import Home from './pages/Home';
 import { Router, Routes, Route } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home/>} />
+        <Route path="signup" element={<SignUp />} />
         <Route path="login" element={<Login />} />
       </Routes>{/* react only uses one parent element*/}
     </div>

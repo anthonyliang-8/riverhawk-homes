@@ -4,45 +4,35 @@ import {
   FormLabel,
   Input,
   Button,
-  FormErrorMessage,
-  useToast,
 } from "@chakra-ui/react";
 import { auth } from "../Firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function Login() {
+function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Sign in user using Firebase Authentication
-      await signInWithEmailAndPassword(auth, email, password);
-      // Successful login
-      // You can redirect the user to a new page or perform other actions here
-      toast({
-        title: "Login Success!",
-        description: "Redirecting to home page.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      // Create user account using Firebase Authentication
+      await createUserWithEmailAndPassword(auth, email, password);
+      // signup success
+      // redirect user to home page here
     } catch (error) {
       setError(error.message);
-      toast({
-        title: "Login Failed.",
-        description: "Incorrect email or password entered.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
     } finally {
       setIsLoading(false);
     }
@@ -67,18 +57,26 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </FormControl>
+        <FormControl isRequired>
+          <FormLabel>Confirm Password</FormLabel>
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </FormControl>
+        {error && <p style={{ color: "red" }}>{error}</p>} {/* Render error message */} 
         <Button
           mt={4}
           colorScheme="teal"
           type="submit"
           isLoading={isLoading}
         >
-          Log In
+          Sign Up
         </Button>
-        {error && <FormErrorMessage>{error}</FormErrorMessage>}
       </form>
     </div>
   );
 }
 
-export default Login;
+export default SignUp;
