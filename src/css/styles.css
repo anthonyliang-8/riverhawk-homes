@@ -1,8 +1,13 @@
 .dorms-container{
+    margin-top: 2em;
     min-width: 50%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+}
+
+.dorms-container div{
+    margin-top: 1em;
 }
 
 .user-div {

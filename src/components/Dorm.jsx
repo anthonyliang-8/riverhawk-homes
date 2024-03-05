@@ -5,12 +5,12 @@ const Dorm = ({ name, campus, price_range, rating, photo }) => {
     <Box
       display="flex"
       width={"xs"}
-      p={4}
+      p={2}
       rounded="md"
       bg="white"
-      border={"1px solid grey"}
+      border={"1px solid lightgrey"}
     >
-      <Image width={'150px'} height={'auto'} src={photo} />
+      <Image rounded="md" w={'150px'} h={'auto'} src={photo} />
       <Stack marginLeft={"2em"} spacing={4}>
         <Heading fontSize="sm">{name}</Heading>
         <Divider />
