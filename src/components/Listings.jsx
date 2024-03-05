@@ -12,12 +12,27 @@ function Listings() {
     const fetchData = async () => {
       const dormsCollectionRef = collection(db, 'dorms'); 
       const docs = await getDocs(dormsCollectionRef);
-      const data = docs.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-      setDorms(data);
+      const data = docs.docs.map(async (doc) => {
+        const dormData = doc.data();
+        const imageURL = await getImageURL(dormData.img_path); // Assuming dormData.img_path contains the path to the image in Firebase Storage
+        return { ...dormData, id: doc.id, img_url: imageURL };
+      });
+      Promise.all(data).then(setDorms);
     };
 
     fetchData();
   }, []);
+
+  const getImageURL = async (imagePath) => {
+    const imageRef = ref(storage, imagePath);
+    try {
+      const url = await getDownloadURL(imageRef);
+      return url;
+    } catch (error) {
+      console.error('Error getting image URL:', error);
+      return ''; // Return an empty string if there's an error
+    }
+  };
 
   return (
     <div className="dorms-container">  
@@ -28,7 +43,7 @@ function Listings() {
           campus={dorm.campus} 
           price_range={dorm.price} 
           rating={dorm.rating} 
-          photo={dorm.image_url}
+          photo={dorm.img_url}
         />
       ))}
     </div>
