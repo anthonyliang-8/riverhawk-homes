@@ -5,7 +5,6 @@ function Home() {
     <div>
       {" "}
       {/*DORMS GO HERE */}
-      <h2>DORMS</h2>
       <Listings />
     </div>
   );

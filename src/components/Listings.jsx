@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import '../css/styles.css'
 import Dorm from './Dorm';
+import { db, storage } from '../Firebase'
+import { collection, getDocs } from 'firebase/firestore';
+import { getDownloadURL, ref } from 'firebase/storage'
 
 function Listings() {
   const [dorms, setDorms] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch('../mock_data.json');
-      const data = await response.json();
+      const dormsCollectionRef = collection(db, 'dorms'); 
+      const docs = await getDocs(dormsCollectionRef);
+      const data = docs.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setDorms(data);
     };
 
@@ -20,12 +24,11 @@ function Listings() {
       {dorms.map((dorm) => (
         <Dorm 
           key={dorm.id}
-          img={dorm.photo}
-          name={dorm.dorm_name} 
+          name={dorm.name} 
           campus={dorm.campus} 
-          price_range={dorm.price_range} 
+          price_range={dorm.price} 
           rating={dorm.rating} 
-          photo={dorm.photo}
+          photo={dorm.image_url}
         />
       ))}
     </div>
