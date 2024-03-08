@@ -19,4 +19,4 @@ Firebase
 
 - Enter `npm run dev` to run environment
 
-Please don't remove .gitignore and push with it removed
+Please don't remove .gitignore
