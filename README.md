@@ -10,6 +10,7 @@ Chakra UI
 Firebase
 - User Auth (TBD)
 - Firestore
+- Cloud Storage
 
 ## Setup & Run
 
