@@ -14,7 +14,7 @@ function Listings() {
       const docs = await getDocs(dormsCollectionRef);
       const data = docs.docs.map(async (doc) => {
         const dormData = doc.data();
-        const imageURL = await getImageURL(dormData.img_path); // Assuming dormData.img_path contains the path to the image in Firebase Storage
+        const imageURL = await getImageURL(dormData.img_path); //img_path holds path to image in Firebase storage
         return { ...dormData, id: doc.id, img_url: imageURL };
       });
       Promise.all(data).then(setDorms);
@@ -30,7 +30,7 @@ function Listings() {
       return url;
     } catch (error) {
       console.error('Error getting image URL:', error);
-      return ''; // Return an empty string if there's an error
+      return ''; // return an empty string if error caught
     }
   };
 
@@ -39,6 +39,7 @@ function Listings() {
       {dorms.map((dorm) => (
         <Dorm 
           key={dorm.id}
+          id={dorm.id}
           name={dorm.name} 
           campus={dorm.campus} 
           price_range={dorm.price} 

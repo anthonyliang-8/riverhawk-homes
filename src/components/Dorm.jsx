@@ -1,7 +1,9 @@
 import { Box, Heading, Text, Stack, Divider, Image } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
-const Dorm = ({ name, campus, price_range, rating, photo }) => {
+const Dorm = ({ id, name, campus, price_range, rating, photo }) => {
   return (
+    <Link to={`/dorm/${id}`}>
     <Box
       display="flex"
       width={"xs"}
@@ -22,6 +24,7 @@ const Dorm = ({ name, campus, price_range, rating, photo }) => {
         </Stack>
       </Stack>
     </Box>
+    </Link>
   );
 };
 
