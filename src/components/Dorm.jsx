@@ -18,7 +18,6 @@ const Dorm = ({ id, name, campus, price_range, rating, photo }) => {
         <Divider />
         <Stack direction="column">
           <Text>{campus} Campus</Text>
-
           <Text>Avg. Rating: {rating}</Text>
           <Text>${price_range}</Text>
         </Stack>
