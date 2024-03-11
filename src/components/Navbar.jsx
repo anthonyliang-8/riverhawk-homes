@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, Flex, Spacer, Button, useColorMode } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Container, Button, useColorMode } from "@chakra-ui/react";
 
 const Navbar = () => {
   return (
@@ -10,7 +10,7 @@ const Navbar = () => {
           <Link to="/">Riverhawk Homes</Link>
         </Box>
         <Spacer />
-        <Box >
+        <Box marginRight={'1em'}>
           <Link to="/login">Login</Link>
         </Box>
         <Box>
