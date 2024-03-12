@@ -1,30 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link} from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { db } from "../Firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import {
-  Box,
-  Image,
-  Text,
-  Container,
-  Divider,
-  Button,
-} from "@chakra-ui/react";
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
 
 function Reviews() {
   const { id } = useParams();
   const [reviewListings, setReviewListings] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const getReviewDetails = async () => {
       try {
+        // Fetch dorm details
         const dormDocRef = doc(db, "dorms", id);
         const dormSnapshot = await getDoc(dormDocRef);
+
         if (dormSnapshot.exists()) {
           const dormData = dormSnapshot.data();
           const imageURL = await getImageURL(dormData.img_path);
           setReviewListings({ ...dormData, img_url: imageURL });
+
+          // Fetch reviews for the current dorm
+          const reviewsQuery = query(
+            collection(db, "reviews"),
+            where("dormId", "==", id)
+          );
+          const querySnapshot = await getDocs(reviewsQuery);
+          const reviews = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setReviews(reviews);
         } else {
           console.log("No such dorm exists!");
         }
@@ -89,6 +104,29 @@ function Reviews() {
           </Button>
         </Container>
       </Box>
+      {reviews.map((review) => (
+        <Box
+          border={"1px solid lightgrey"}
+          borderRadius={"8px"}
+          padding={"5px"}
+          key={review.id}
+          my={4}
+        >
+          <Text fontSize="xl" fontWeight="bold">
+            {review.title}
+          </Text>
+          <Text>{review.description}</Text>
+          {review.imageUrls.map((imageUrl) => (
+            <Image
+              w={"150px"}
+              h={"auto"}
+              key={imageUrl}
+              src={imageUrl}
+              alt="Review Image"
+            />
+          ))}
+        </Box>
+      ))}
     </Container>
   );
 }
