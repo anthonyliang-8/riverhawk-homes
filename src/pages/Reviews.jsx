@@ -62,10 +62,12 @@ function Reviews() {
       return url;
     } catch (error) {
       console.error("Error getting image URL:", error);
-      return ""; // Return an empty string if there's an error
+      return ""; // return an empty string if there's an error
     }
   };
 
+
+  // !! TODO: Replace with spinner
   if (!reviewListings) {
     return <div>Loading...</div>;
   }
