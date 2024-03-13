@@ -8,9 +8,9 @@ React.js
 Chakra UI
 
 Firebase
-- User Auth (TBD)
+- User Auth
 - Firestore
-
+- Storage
 ## Setup & Run
 
 - Clone the repo `git clone` via SSH/HTTPS/CLI
