@@ -1,7 +1,7 @@
 # Riverhawk-Homes
 
 ## About
-A web application that allows students, whether incoming, current or past students, a way to leave and look at reviews for dorms provided by UMass Lowell.
+A web application that allows incoming, current, or past students a way to leave and look at reviews for dorms provided by UMass Lowell.
 ## Stack
 React.js
 
