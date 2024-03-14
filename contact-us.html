@@ -1,12 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact Us Page</title>
+    <title>Contact Us</title>
+    <link rel="stylesheet" type="text/css" href="CSS/contact-us.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <header class="Navbar">
+      <a href="index.html">
+        <img src="Images/Logo.png" alt="Company Logo" class="Logo" />
+      </a>
+      <a href="#" class="LoginButton">Login</a>
+    </header>
+
+    <div class="container">
+      <div class="imageArea"></div>
+      <div class="contactForm">
+        <h1>Contact Us</h1>
+        <form>
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" required />
+
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" required />
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="message">Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+
+        <div id="confirmationMessage">Thank you for submitting the form!</div>
+      </div>
+    </div>
+
+    <footer class="Footer">
+      <a href="contact-us.html" class="FooterButton">Contact Us</a>
+      <a href="about-us.html" class="FooterButton">About Us</a>
+    </footer>
+
+    <script src="JS/submit.js"></script>
   </body>
 </html>
