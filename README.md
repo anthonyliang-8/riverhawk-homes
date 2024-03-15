@@ -10,7 +10,7 @@ Chakra UI
 Firebase
 - User Auth
 - Firestore
-- Storage
+- Cloud Storage
 ## Setup & Run
 
 - Clone the repo `git clone` via SSH/HTTPS/CLI
@@ -18,4 +18,4 @@ Firebase
 
 - Enter `npm run dev` to run environment
 
-Please don't remove .gitignore and push with it removed
+Please don't remove .gitignore

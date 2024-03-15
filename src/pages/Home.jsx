@@ -1,11 +1,11 @@
+import HomePageFilter from "../components/HomePageFilter";
 import Listings from "../components/Listings";
+
+import { Container } from "@chakra-ui/react";
 
 function Home() {
   return (
     <div>
-      {" "}
-      {/*DORMS GO HERE */}
-      <h2>DORMS</h2>
       <Listings />
     </div>
   );
