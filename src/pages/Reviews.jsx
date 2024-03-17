@@ -73,7 +73,7 @@ function Reviews() {
   }
 
   return (
-    <Container>
+    <Container minH="100vh">
       <Box
         maxW="lg"
         maxH={"lg"}
