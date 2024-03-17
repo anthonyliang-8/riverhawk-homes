@@ -12,6 +12,7 @@ import {
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
 
+// probably needs to be changed, will only take longer & longer with more reviews.
 function getAvgRating(reviews) {
   if(reviews.length === 0)
     return 0;
