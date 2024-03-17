@@ -12,17 +12,13 @@ import {
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
 
-// was going to use this to display the avg ratings...
-// i realize now that we just need to keep on on the db
-// also idk why this gives me 27 (on fox hall)
-// also changed line 118, it was: <Text>Avg. Rating: {reviewListings.rating}</Text>
 function getAvgRating(reviews) {
   if(reviews.length === 0)
     return 0;
 
   var total = 0;
   reviews.forEach((review) => {
-    total += review.rating;
+    total += parseInt(review.rating);
   });
 
   const avg = total/reviews.length;
