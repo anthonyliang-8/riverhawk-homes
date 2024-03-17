@@ -16,6 +16,7 @@ const RatingForm = () => {
   const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [rating, setRating] = useState("");
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -56,6 +57,7 @@ const RatingForm = () => {
         title,
         description,
         imageUrls,
+        rating
       });
       console.log('Review added with ID:', newReview.id);
     } catch (error) {
@@ -75,6 +77,14 @@ const RatingForm = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Great dorm!"
+          />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel>Review Rating</FormLabel> 
+          <Textarea
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+            placeholder="5"
           />
         </FormControl>
         <FormControl mb={4}>
