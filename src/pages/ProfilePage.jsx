@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '../Firebase';
+import '../css/styles.css'
 import { 
   Text,
   Box,
   Button,
   useToast,
   Input,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 
 const ProfilePage = () => {
@@ -36,7 +39,8 @@ const ProfilePage = () => {
     return unsubscribe;
   }, []);
 
-  // sign the user out and redirects them to the home page
+  // QUALITY OF LIFE TODO: Make window reload before toast pop up
+  // sign the user out and redirect them to the home page
   const handleLogout = async () => {
     setIsLoading(true);
 
@@ -67,7 +71,8 @@ const ProfilePage = () => {
 
   // concats the first and last name into a display name
   // and then alerts the user to a success or failure
-  const handleNameChange = async () => {
+  const handleNameChange = async (e) => {
+    e.preventDefault();
     setIsLoading(true);
     try {
       await updateProfile(auth.currentUser, {
@@ -96,43 +101,50 @@ const ProfilePage = () => {
       setIsLoading(false);
     }
   };
-  // QUALITY OF LIFE: Make window reload before toast pop up
+
   // handles the displaying of the welcome message, info, changes, and logout button
   // also contains the forms that are hidden/shown when a change button is pressed
   return (
-    <Box maxW="md" mx="auto" mt={8} border={'1px solid lightgrey'} h={'md'} padding={5}>
+    <Box maxW="md" mx="auto" mt={8} border={'1px solid lightgrey'} padding={5}>
       <Text mx="auto"><b>Welcome to your profile!</b></Text>
 
-      <Box maxW="md" mx="auto" mt={8} border={'1px solid lightgrey'} padding={5}>
-        <Text borderBottom="1px solid lightgrey" pb={2} mb={2}>
+      <Box maxW="md" ml="auto" mt={4} border={'1px solid lightgrey'} padding={5}>
+        <Text pb={3}>
           <b>Display Name:</b> {displayName}
+          {!hideNameForm ? (
+            <form onSubmit={handleNameChange}>
+              <FormControl isRequired>
+                <FormLabel mt={2}>First Name</FormLabel>
+                  <Input value={firstName} placeholder="John"
+                    onChange={(e) => setFirstName(e.target.value)}/>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel mt={5}>Last Name</FormLabel>
+                  <Input value={lastName} placeholder="Doe" 
+                    onChange={(e) => setLastName(e.target.value)} />
+              </FormControl>
+
+              <Button ml="auto" mt={4} type="submit" colorScheme="green" isLoading={isLoading}>
+                Submit
+              </Button>
+
+              <Button ml={5} mt={4} type="cancel" colorScheme="red" 
+                onClick={() => setHideNameForm(true)} isLoading={isLoading}>
+                Cancel
+              </Button>
+            </form>
+            ) : ( 
+            <Button ml={4} size="xs" type="button" colorScheme="teal" 
+              onClick={() => setHideNameForm(false)}>
+              Change Name
+            </Button>
+            )
+          }
         </Text>
-        <Text borderBottom="1px solid lightgrey" pb={2} mb={2}>
+        <Text borderTop="1px solid lightgrey" mt={4} pt={5} mb={2}>
           <b>Email:</b> {email}
         </Text>
-
-        {!hideNameForm ? (
-          <Box>
-            <Input value={firstName} placeholder="First Name" 
-              onChange={(e) => setFirstName(e.target.value)}/>
-            <Input value={lastName} placeholder="Last Name" 
-              onChange={(e) => setLastName(e.target.value)} />
-            <Button ml={4} mt={4} type="button" colorScheme="green" 
-              onClick={handleNameChange} isLoading={isLoading}>
-              Submit
-            </Button>
-            <Button mx={4} mt={4} type="button" colorScheme="red" 
-              onClick={() => setHideNameForm(true)} isLoading={isLoading}>
-              Cancel
-            </Button>
-          </Box>
-          ) : ( 
-          <Button ml={4} mt={4} type="button" colorScheme="teal" 
-            onClick={() => setHideNameForm(false)}>
-            Change Name
-          </Button>
-          )
-        }
       </Box>
 
       <Button mx="auto" mt={4} type="button" 
@@ -150,7 +162,6 @@ To be implemented in the future
   onClick={handlePasswordChange} isLoading={isLoading}>
   Change Password
 </Button>
-
 */
 
 export default ProfilePage;
