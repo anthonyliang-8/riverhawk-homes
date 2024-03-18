@@ -49,12 +49,12 @@ const ProfilePage = () => {
       setDisplayName("");
       toast({
         title: "Logout Successful!",
-        description: "Redirecting to login page.",
+        description: "Redirecting to home page.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Error logging out:', error);
       toast({

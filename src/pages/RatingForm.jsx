@@ -23,7 +23,7 @@ const RatingForm = () => {
     e.preventDefault();
     const imageUrls = [];
 
-    // Upload images to Firebase Storage
+    // upload images to Firebase Storage
     for (const image of images) {
       const storageRef = ref(storage, `reviews/${id}/${image.name}`);
       const uploadTask = uploadBytesResumable(storageRef, image);
