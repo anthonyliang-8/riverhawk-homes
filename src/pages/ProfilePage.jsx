@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '../Firebase';
 import '../css/styles.css'
-import { 
+import {
   Text,
   Box,
   Button,
@@ -134,7 +134,7 @@ const ProfilePage = () => {
                 Cancel
               </Button>
             </form>
-            ) : ( 
+            ) : (
             <Button ml={4} size="xs" type="button" colorScheme="teal" 
               onClick={() => setHideNameForm(false)}>
               Change Name
@@ -147,9 +147,9 @@ const ProfilePage = () => {
         </Text>
       </Box>
 
-      <Button mx="auto" mt={4} type="button" 
+      <Button mx="auto" mt={4} type="button"
         colorScheme="teal" onClick={handleLogout} isLoading={isLoading}>
-        Logout
+          Logout
       </Button>
     </Box>
   );
