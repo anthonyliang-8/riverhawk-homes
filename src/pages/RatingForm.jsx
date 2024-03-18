@@ -10,12 +10,37 @@ import {
 } from "@chakra-ui/react";
 import { storage, db } from "../Firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+
+// Function to update the avg rating. It updates the database whenever a rating is submitted
+// I added some imports to make this work.
+async function updateAvgRating(db, id, rating) {
+  try {
+    const dormDocRef = doc(db, 'dorms', id);
+    const dormSnapshot = await getDoc(dormDocRef);
+
+    if (dormSnapshot.exists()) {
+      const dormData = dormSnapshot.data();
+      var oldAvg = dormData.rating;
+      var oldEntries = dormData.entries; // used to keep track of the num we need to divide by
+      var newEntries = oldEntries + 1;
+      var avg = ((oldAvg * oldEntries) + rating) / newEntries;
+      avg.toFixed(2); // we can change this to 1 if we just want like X.X instead of X.XX
+
+      await updateDoc(dormDocRef, {rating: avg, entries: newEntries}); // update db
+    } else {
+      console.log("No such dorm exists!");
+    }
+  } catch (error) {
+    console.error("Error updating average:", error);
+  }
+}
 
 const RatingForm = () => {
   const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [rating, setRating] = useState("");
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -56,8 +81,10 @@ const RatingForm = () => {
         title,
         description,
         imageUrls,
+        rating
       });
       console.log('Review added with ID:', newReview.id);
+      await updateAvgRating(db, id, parseInt(rating)); // update avg rating of dorm
     } catch (error) {
       console.error('Error adding review:', error);
     }
@@ -75,6 +102,14 @@ const RatingForm = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Great dorm!"
+          />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel>Review Rating</FormLabel> 
+          <Textarea
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+            placeholder="5"
           />
         </FormControl>
         <FormControl mb={4}>

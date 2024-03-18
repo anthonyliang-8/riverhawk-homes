@@ -12,6 +12,24 @@ import {
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
 
+// probably needs to be changed, will only take longer & longer with more reviews.
+/*
+I decided to go ahead and change it already, we can delete this if you want
+
+function getAvgRating(reviews) {
+  if(reviews.length === 0)
+    return 0;
+
+  var total = 0;
+  reviews.forEach((review) => {
+    total += parseInt(review.rating);
+  });
+
+  const avg = total/reviews.length;
+  return avg.toFixed(2);
+}
+*/
+
 function Reviews() {
   const { id } = useParams();
   const [reviewListings, setReviewListings] = useState(null);
@@ -98,7 +116,7 @@ function Reviews() {
             <Divider />
             <Text>{reviewListings.campus} Campus</Text>
             <Text>Price Range: ${reviewListings.price}</Text>
-            <Text>Rating: {reviewListings.rating}</Text>
+            <Text>Avg. Rating: {reviewListings.rating}</Text>
           </Container>
 
           <Button colorScheme="blue">
@@ -116,6 +134,9 @@ function Reviews() {
         >
           <Text fontSize="xl" fontWeight="bold">
             {review.title}
+          </Text>
+          <Text fontSize="x1" fontWeight="bold">
+            {review.rating}
           </Text>
           <Text>{review.description}</Text>
           {review.imageUrls.map((imageUrl) => (
