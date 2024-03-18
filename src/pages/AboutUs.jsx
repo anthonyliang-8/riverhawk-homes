@@ -2,9 +2,7 @@ import React from "react";
 import anthony from "../img/anthony.jpg";
 import dylan from "../img/dylan.jpg";
 import kevin from "../img/kevin.jpg";
-import temp from "../img/temp.jpg";
-import "../img/dylan.jpg";
-import "../img/kevin.jpg";
+import kristina from "../img/kristina.jpg"
 import {
   Box,
   Flex,
@@ -83,7 +81,7 @@ const AboutUs = () => {
           mb={8}
         >
           <Image
-            src={temp}
+            src={kristina}
             alt="Kristina Russell"
             w={"150px"}
             h={"200px"}
