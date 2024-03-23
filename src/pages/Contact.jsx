@@ -15,7 +15,6 @@ const Contact = () => {
   const toast = useToast();
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Your form submission logic here
     toast({
       title: "Success!",
       description: "Your form has been submitted and will be reviewed.",

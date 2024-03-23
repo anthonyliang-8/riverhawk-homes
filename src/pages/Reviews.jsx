@@ -38,7 +38,7 @@ function Reviews() {
   useEffect(() => {
     const getReviewDetails = async () => {
       try {
-        // Fetch dorm details
+        // fetch dorm details
         const dormDocRef = doc(db, "dorms", id);
         const dormSnapshot = await getDoc(dormDocRef);
 
@@ -47,7 +47,7 @@ function Reviews() {
           const imageURL = await getImageURL(dormData.img_path);
           setReviewListings({ ...dormData, img_url: imageURL });
 
-          // Fetch reviews for the current dorm
+          // fetch reviews for the current dorm
           const reviewsQuery = query(
             collection(db, "reviews"),
             where("dormId", "==", id)
@@ -85,7 +85,7 @@ function Reviews() {
   };
 
 
-  // !! TODO: Replace with spinner
+  // !! TODO: Replace with spinner, this is just temporary to show routing
   if (!reviewListings) {
     return <div>Loading...</div>;
   }

@@ -19,7 +19,6 @@ const ProfilePage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [hideNameForm, setHideNameForm] = useState(true);
-  const [hidePasswordForm, setHidePasswordForm] = useState(true);
   const [newDisplayName, setNewDisplayName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();

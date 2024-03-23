@@ -74,7 +74,7 @@ const RatingForm = () => {
       });
     }
     try {
-      // Add review data to Firestore
+      // add review data to Firestore
       const reviewsCollection = collection(db, 'reviews');
       const newReview = await addDoc(reviewsCollection, {
         dormId: id,
