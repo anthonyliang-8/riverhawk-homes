@@ -37,7 +37,7 @@ const Navbar = () => {
           </Box>
         )}
         {!isLoggedIn && (
-          <Box>
+          <Box border={'1px solid black'} borderRadius={'8px'} p={1}>
             <Link to="/signup">Sign Up</Link>
           </Box>
         )}
