@@ -27,7 +27,7 @@ async function updateAvgRating(db, id, rating) {
       var avg = ((oldAvg * oldEntries) + rating) / newEntries;
       avg.toFixed(2); // we can change this to 1 if we just want like X.X instead of X.XX
 
-      await updateDoc(dormDocRef, {rating: avg, entries: newEntries}); // update db
+      await updateDoc(dormDocRef, {rating: parseFloat(avg), entries: newEntries}); // update db
     } else {
       console.log("No such dorm exists!");
     }
