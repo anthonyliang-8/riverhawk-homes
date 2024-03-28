@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import ReviewStars from "../components/ReviewStars";
 import { db } from "../Firebase";
 import {
   doc,
@@ -8,9 +9,12 @@ import {
   query,
   where,
   getDocs,
+  deleteDoc,
 } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
+import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
 // probably needs to be changed, will only take longer & longer with more reviews.
 /*
@@ -34,8 +38,25 @@ function Reviews() {
   const { id } = useParams();
   const [reviewListings, setReviewListings] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [currentUID, setCurrentUID] = useState(null);
+  const [thumbsDownColor, setThumbsDownColor] = useState(false);
+  const [thumbsUpColor, setThumbsUpColor] = useState(false);
 
+  /* hook to get all user IDs, implemented this just so
+  we can seperate it from the admin UID */
   useEffect(() => {
+    const fetchUserUID = () => {
+      const auth = getAuth();
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setCurrentUID(user.uid);
+        } else {
+          setCurrentUID(null);
+        }
+      });
+    };
+
+    fetchUserUID();
     const getReviewDetails = async () => {
       try {
         // fetch dorm details
@@ -84,6 +105,30 @@ function Reviews() {
     }
   };
 
+  /* !! function to handle removing the review */
+  const deleteReview = async (reviewId) => {
+    try {
+      // reference doc in review collection
+      const reviewDocRef = doc(db, "reviews", reviewId);
+
+      // remove review doc
+      await deleteDoc(reviewDocRef);
+
+      setReviews((prevReviews) =>
+        prevReviews.filter((review) => review.id !== reviewId)
+      );
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  };
+
+  const handleThumbsDown = () => {
+    setThumbsDownColor(!thumbsDownColor)
+  };
+
+  const handleThumbsUp = () => {
+    setThumbsUpColor(!thumbsUpColor)
+  };
 
   // !! TODO: Replace with spinner, this is just temporary to show routing
   if (!reviewListings) {
@@ -135,9 +180,10 @@ function Reviews() {
           <Text fontSize="xl" fontWeight="bold">
             {review.title}
           </Text>
-          <Text fontSize="x1" fontWeight="bold">
-            {review.rating}
-          </Text>
+          <Divider />
+          <Box>
+            <ReviewStars rating={parseInt(review.rating)} />
+          </Box>
           <Text>{review.description}</Text>
           {review.imageUrls.map((imageUrl) => (
             <Image
@@ -148,6 +194,22 @@ function Reviews() {
               alt="Review Image"
             />
           ))}
+          <Box display={"flex"} alignItems={"center"} flexDir={"row-reverse"}>
+            {/*admin UID here, the hook seperates this from the rest*/}
+            {currentUID === "Wb85k2s2pXeiZcnAKZwmU10joRM2" && (
+              <Trash
+                cursor={"pointer"}
+                size={28}
+                color="#ff2600" 
+                weight="fill"
+                onClick={() => deleteReview(review.id)}
+              />
+            )}
+            <Warning size={28} color="#0432ff" weight="duotone" />
+            {/*on click should change colors, default should be black */}
+            <ThumbsDown size={28} color={thumbsDownColor ? "#ff2600" : "#000000"} weight="duotone" />
+            <ThumbsUp size={28} color="#00f900" weight="duotone" />
+          </Box>
         </Box>
       ))}
     </Container>
