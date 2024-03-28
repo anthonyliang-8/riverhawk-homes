@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import RatingStars from "../components/RatingStars";
 import {
   Box,
   Input,
@@ -10,13 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { storage, db } from "../Firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { Star } from "@phosphor-icons/react";
 
 // Function to update the avg rating. It updates the database whenever a rating is submitted
 // I added some imports to make this work.
 async function updateAvgRating(db, id, rating) {
   try {
-    const dormDocRef = doc(db, 'dorms', id);
+    const dormDocRef = doc(db, "dorms", id);
     const dormSnapshot = await getDoc(dormDocRef);
 
     if (dormSnapshot.exists()) {
@@ -24,10 +26,10 @@ async function updateAvgRating(db, id, rating) {
       var oldAvg = dormData.rating;
       var oldEntries = dormData.entries; // used to keep track of the num we need to divide by
       var newEntries = oldEntries + 1;
-      var avg = ((oldAvg * oldEntries) + rating) / newEntries;
+      var avg = (oldAvg * oldEntries + rating) / newEntries;
       avg.toFixed(2); // we can change this to 1 if we just want like X.X instead of X.XX
 
-      await updateDoc(dormDocRef, {rating: avg, entries: newEntries}); // update db
+      await updateDoc(dormDocRef, { rating: avg, entries: newEntries }); // update db
     } else {
       console.log("No such dorm exists!");
     }
@@ -75,18 +77,18 @@ const RatingForm = () => {
     }
     try {
       // add review data to Firestore
-      const reviewsCollection = collection(db, 'reviews');
+      const reviewsCollection = collection(db, "reviews");
       const newReview = await addDoc(reviewsCollection, {
         dormId: id,
         title,
         description,
         imageUrls,
-        rating
+        rating,
       });
-      console.log('Review added with ID:', newReview.id);
+      console.log("Review added with ID:", newReview.id);
       await updateAvgRating(db, id, parseInt(rating)); // update avg rating of dorm
     } catch (error) {
-      console.error('Error adding review:', error);
+      console.error("Error adding review:", error);
     }
     // TODO: Save review data (title, description, imageUrls) to Firestore
     console.log("Image URLs:", imageUrls);
@@ -105,11 +107,10 @@ const RatingForm = () => {
           />
         </FormControl>
         <FormControl mb={4}>
-          <FormLabel>Review Rating</FormLabel> 
-          <Textarea
+          <FormLabel>Review Rating</FormLabel>
+          <RatingStars
             value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            placeholder="5"
+            onChange={(newRating) => setRating(newRating)}
           />
         </FormControl>
         <FormControl mb={4}>
