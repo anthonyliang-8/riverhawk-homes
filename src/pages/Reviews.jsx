@@ -10,29 +10,12 @@ import {
   where,
   getDocs,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
-
-// probably needs to be changed, will only take longer & longer with more reviews.
-/*
-I decided to go ahead and change it already, we can delete this if you want
-
-function getAvgRating(reviews) {
-  if(reviews.length === 0)
-    return 0;
-
-  var total = 0;
-  reviews.forEach((review) => {
-    total += parseInt(review.rating);
-  });
-
-  const avg = total/reviews.length;
-  return avg.toFixed(2);
-}
-*/
 
 function Reviews() {
   const { id } = useParams();
@@ -106,13 +89,26 @@ function Reviews() {
   };
 
   /* !! function to handle removing the review */
-  const deleteReview = async (reviewId) => {
+  const deleteReview = async (reviewId, reviewRating) => {
     try {
       // reference doc in review collection
       const reviewDocRef = doc(db, "reviews", reviewId);
 
       // remove review doc
       await deleteDoc(reviewDocRef);
+
+      // update dorm avg rating
+      const dormDocRef = doc(db, "dorms", id);
+      const dormSnapshot = await getDoc(dormDocRef);
+      if (dormSnapshot.exists()) {
+        const dormData = dormSnapshot.data();
+        var newAvg = ((dormData.rating * dormData.entries) - reviewRating) / (dormData.entries - 1);
+        newAvg = parseFloat(newAvg.toFixed(2));
+
+        await updateDoc(dormDocRef, {rating: newAvg, entries: (dormData.entries - 1)});
+      } else {
+        console.log("No such dorm exists!");
+      }
 
       setReviews((prevReviews) =>
         prevReviews.filter((review) => review.id !== reviewId)
@@ -202,7 +198,7 @@ function Reviews() {
                 size={28}
                 color="#ff2600" 
                 weight="fill"
-                onClick={() => deleteReview(review.id)}
+                onClick={() => deleteReview(review.id, review.rating)}
               />
             )}
             <Warning size={28} color="#0432ff" weight="duotone" />

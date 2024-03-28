@@ -18,18 +18,15 @@ import { Star } from "@phosphor-icons/react";
 // I added some imports to make this work.
 async function updateAvgRating(db, id, rating) {
   try {
-    const dormDocRef = doc(db, "dorms", id);
+    const dormDocRef = doc(db, 'dorms', id);
     const dormSnapshot = await getDoc(dormDocRef);
 
     if (dormSnapshot.exists()) {
       const dormData = dormSnapshot.data();
-      var oldAvg = dormData.rating;
-      var oldEntries = dormData.entries; // used to keep track of the num we need to divide by
-      var newEntries = oldEntries + 1;
-      var avg = (oldAvg * oldEntries + rating) / newEntries;
-      avg.toFixed(2); // we can change this to 1 if we just want like X.X instead of X.XX
-
-      await updateDoc(dormDocRef, { rating: avg, entries: newEntries }); // update db
+      var newAvg = ((dormData.rating * dormData.entries) + rating) / (dormData.entries + 1);
+      newAvg = parseFloat(newAvg.toFixed(2));
+      
+      await updateDoc(dormDocRef, {rating: newAvg, entries: (dormData.entries + 1)}); // update db
     } else {
       console.log("No such dorm exists!");
     }
