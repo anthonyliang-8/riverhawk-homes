@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import ReviewStars from "../components/ReviewStars";
+import useColorState from "../hooks/useColorState";
 import { db } from "../Firebase";
 import {
   doc,
@@ -38,8 +39,8 @@ function Reviews() {
   const [reviewListings, setReviewListings] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [currentUID, setCurrentUID] = useState(null);
-  const [thumbsDownColor, setThumbsDownColor] = useState(false);
-  const [thumbsUpColor, setThumbsUpColor] = useState(false);
+  const [thumbsUpColors, setThumbsUpColors] = useColorState("thumbsUpColors", {});
+  const [thumbsDownColors, setThumbsDownColors] = useColorState("thumbsDownColors", {});
   const [selectedImage, setSelectedImage] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -114,16 +115,22 @@ function Reviews() {
     try {
       const reviewDocRef = doc(db, "reviews", reviewId);
       const reviewDoc = await getDoc(reviewDocRef);
-  
+
       if (reviewDoc.exists()) {
-        const reactionsRef = doc(db, "reviews", reviewId, "reactions", currentUID);
+        const reactionsRef = doc(
+          db,
+          "reviews",
+          reviewId,
+          "reactions",
+          currentUID
+        );
         const reactionDoc = await getDoc(reactionsRef);
-  
+
         let updatedReactions = {
           thumbsUp: reviewDoc.data().thumbsUp || [],
           thumbsDown: reviewDoc.data().thumbsDown || [],
         };
-  
+
         if (reactionDoc.exists()) {
           // User has already reacted, remove their reaction
           const existingReaction = reactionDoc.data().reaction;
@@ -137,13 +144,13 @@ function Reviews() {
             );
           }
         }
-  
+
         if (reaction === "thumbsUp") {
           updatedReactions.thumbsUp = arrayUnion(currentUID);
         } else if (reaction === "thumbsDown") {
           updatedReactions.thumbsDown = arrayUnion(currentUID);
         }
-  
+
         await setDoc(reactionsRef, { reaction }, { merge: true });
         await updateDoc(reviewDocRef, updatedReactions);
       } else {
@@ -153,6 +160,7 @@ function Reviews() {
       console.error("Error handling reaction:", error);
     }
   };
+
 
   /* !! function to handle removing the review */
   const deleteReview = async (reviewId, reviewRating) => {
@@ -196,38 +204,34 @@ can be displayed*/
   }
   const handleThumbsUp = async (reviewId) => {
     await handleReaction(reviewId, "thumbsUp");
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === reviewId
-          ? {
-              ...review,
-              thumbsUpColor: !review.thumbsUpColor,
-              thumbsDownColor: false,
-            }
-          : review
-      )
-    );
+    setThumbsUpColors((prevColors) => ({
+      ...prevColors,
+      [reviewId]: !prevColors[reviewId],
+    }));
+    setThumbsDownColors((prevColors) => ({
+      ...prevColors,
+      [reviewId]: false,
+    }));
     const updatedReviews = await fetchUpdatedReviews(id);
     setReviews(updatedReviews);
   };
   
   const handleThumbsDown = async (reviewId) => {
     await handleReaction(reviewId, "thumbsDown");
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === reviewId
-          ? {
-              ...review,
-              thumbsDownColor: !review.thumbsDownColor,
-              thumbsUpColor: false,
-            }
-          : review
-      )
-    );
+    setThumbsDownColors((prevColors) => ({
+      ...prevColors,
+      [reviewId]: !prevColors[reviewId],
+    }));
+    setThumbsUpColors((prevColors) => ({
+      ...prevColors,
+      [reviewId]: false,
+    }));
     const updatedReviews = await fetchUpdatedReviews(id);
     setReviews(updatedReviews);
   };
 
+
+  
   const fetchUpdatedReviews = async (dormId) => {
     try {
       const reviewsQuery = query(
@@ -238,8 +242,6 @@ can be displayed*/
       const updatedReviews = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        thumbsUpColor: false,
-        thumbsDownColor: false,
       }));
       return updatedReviews;
     } catch (error) {
@@ -346,7 +348,7 @@ can be displayed*/
             {/*on click should change colors, default should be black */}
             <ThumbsDown
               size={28}
-              color={review.thumbsDownColor ? "#ff2600" : "#000000"}
+              color={thumbsDownColors[review.id] ? "#ff2600" : "#000000"}
               weight="duotone"
               onClick={() => handleThumbsDown(review.id)}
             />
@@ -355,7 +357,7 @@ can be displayed*/
             </Text>
             <ThumbsUp
               size={28}
-              color={review.thumbsUpColor ? "#00f900" : "#000000"}
+              color={thumbsUpColors[review.id] ? "#00f900" : "#000000"}
               weight="duotone"
               onClick={() => handleThumbsUp(review.id)}
             />
@@ -389,4 +391,3 @@ can be displayed*/
 }
 
 export default Reviews;
-
