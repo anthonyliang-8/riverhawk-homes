@@ -14,7 +14,21 @@ import {
 } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Box, Image, Text, Container, Divider, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Text,
+  Container,
+  Divider,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
 function Reviews() {
@@ -24,6 +38,8 @@ function Reviews() {
   const [currentUID, setCurrentUID] = useState(null);
   const [thumbsDownColor, setThumbsDownColor] = useState(false);
   const [thumbsUpColor, setThumbsUpColor] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   /* hook to get all user IDs, implemented this just so
   we can seperate it from the admin UID */
@@ -40,6 +56,7 @@ function Reviews() {
     };
 
     fetchUserUID();
+
     const getReviewDetails = async () => {
       try {
         // fetch dorm details
@@ -60,6 +77,8 @@ function Reviews() {
           const reviews = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
+            thumbsUpColor: false, // Initialize thumbsUpColor for each review
+            thumbsDownColor: false, // Initialize thumbsDownColor for each review
           }));
           setReviews(reviews);
         } else {
@@ -102,10 +121,15 @@ function Reviews() {
       const dormSnapshot = await getDoc(dormDocRef);
       if (dormSnapshot.exists()) {
         const dormData = dormSnapshot.data();
-        var newAvg = ((dormData.rating * dormData.entries) - reviewRating) / (dormData.entries - 1);
+        var newAvg =
+          (dormData.rating * dormData.entries - reviewRating) /
+          (dormData.entries - 1);
         newAvg = parseFloat(newAvg.toFixed(2));
 
-        await updateDoc(dormDocRef, {rating: newAvg, entries: (dormData.entries - 1)});
+        await updateDoc(dormDocRef, {
+          rating: newAvg,
+          entries: dormData.entries - 1,
+        });
       } else {
         console.log("No such dorm exists!");
       }
@@ -117,14 +141,46 @@ function Reviews() {
       console.error("Error deleting review:", error);
     }
   };
-
-  const handleThumbsDown = () => {
-    setThumbsDownColor(!thumbsDownColor)
+  
+  {
+    /* states for the thumbs up and thumbs down buttons 
+will need to add logic in Firebase so that the amount of upvotes and downvotes
+can be displayed*/
+  }
+  const handleThumbsDown = (reviewId) => {
+    setReviews((prevReviews) =>
+      prevReviews.map((review) =>
+        review.id === reviewId
+          ? {
+              ...review,
+              thumbsDownColor: !review.thumbsDownColor,
+              thumbsUpColor: false,
+            }
+          : review
+      )
+    );
   };
 
-  const handleThumbsUp = () => {
-    setThumbsUpColor(!thumbsUpColor)
+  const handleThumbsUp = (reviewId) => {
+    setReviews((prevReviews) =>
+      prevReviews.map((review) =>
+        review.id === reviewId
+          ? {
+              ...review,
+              thumbsUpColor: !review.thumbsUpColor,
+              thumbsDownColor: false,
+            }
+          : review
+      )
+    );
   };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsOpen(true);
+  };
+
+  const onClose = () => setIsOpen(false);
 
   // !! TODO: Replace with spinner, this is just temporary to show routing
   if (!reviewListings) {
@@ -133,6 +189,7 @@ function Reviews() {
 
   return (
     <Container minH="100vh">
+      {/* !! This first Box is to store the basic info about the dorm itself */}
       <Box
         maxW="lg"
         maxH={"lg"}
@@ -165,49 +222,91 @@ function Reviews() {
           </Button>
         </Container>
       </Box>
+      {/* Review components are mapped and displayed here */}
       {reviews.map((review) => (
         <Box
           border={"1px solid lightgrey"}
           borderRadius={"8px"}
-          padding={"5px"}
+          padding={"1em"}
           key={review.id}
           my={4}
         >
-          <Text fontSize="xl" fontWeight="bold">
-            {review.title}
-          </Text>
-          <Divider />
-          <Box>
+          {/* Title for review */}
+          <Text fontWeight="bold">{review.title}</Text>
+          <Divider mt={".3em"} mb={".3m"} />
+          <Box mt={".3em"} mb={".5em"}>
             <ReviewStars rating={parseInt(review.rating)} />
           </Box>
-          <Text>{review.description}</Text>
-          {review.imageUrls.map((imageUrl) => (
-            <Image
-              w={"150px"}
-              h={"auto"}
-              key={imageUrl}
-              src={imageUrl}
-              alt="Review Image"
-            />
-          ))}
-          <Box display={"flex"} alignItems={"center"} flexDir={"row-reverse"}>
+          {/* Review description text*/}
+          <Text mb={".5em"}>{review.description}</Text>
+          <Box display={"flex"} flexDir={"row"} overflowX={"auto"}>
+            {review.imageUrls.map((imageUrl) => (
+              <Image
+                w={"150px"}
+                h={"auto"}
+                key={imageUrl}
+                src={imageUrl}
+                alt="Review Image"
+                pr=".5em"
+                onClick={() => handleImageClick(imageUrl)}
+              />
+            ))}
+          </Box>
+          {/* Container to store review buttons (thumbs up/down, report, delete) */}
+          <Box
+            mt={".5em"}
+            display={"flex"}
+            alignItems={"center"}
+            flexDir={"row-reverse"}
+          >
             {/*admin UID here, the hook seperates this from the rest*/}
             {currentUID === "Wb85k2s2pXeiZcnAKZwmU10joRM2" && (
               <Trash
                 cursor={"pointer"}
                 size={28}
-                color="#ff2600" 
+                color="#ff2600"
                 weight="fill"
                 onClick={() => deleteReview(review.id, review.rating)}
               />
             )}
             <Warning size={28} color="#0432ff" weight="duotone" />
             {/*on click should change colors, default should be black */}
-            <ThumbsDown size={28} color={thumbsDownColor ? "#ff2600" : "#000000"} weight="duotone" />
-            <ThumbsUp size={28} color="#00f900" weight="duotone" />
+            <ThumbsDown
+              size={28}
+              color={review.thumbsDownColor ? "#ff2600" : "#000000"}
+              weight="duotone"
+              onClick={() => handleThumbsDown(review.id)}
+            />
+            <ThumbsUp
+              size={28}
+              color={review.thumbsUpColor ? "#00f900" : "#000000"}
+              weight="duotone"
+              onClick={() => handleThumbsUp(review.id)}
+            />
           </Box>
         </Box>
       ))}
+      {/* !! This is the pop up for the images
+      https://chakra-ui.com/docs/components/modal/usage
+      */}
+      <Modal size={"xl"} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader />{" "}
+          {/* shortened since a title probably isn't needed + styling*/}
+          <ModalCloseButton />
+          <ModalBody>
+            <Image
+              src={selectedImage}
+              alt="Review Image"
+              maxW="100%"
+              maxH="100%"
+            />
+          </ModalBody>
+          <ModalFooter />{" "}
+          {/* shortened, description of image prob not needed + styling*/}
+        </ModalContent>
+      </Modal>
     </Container>
   );
 }
