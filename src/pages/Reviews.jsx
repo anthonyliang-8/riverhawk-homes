@@ -5,6 +5,8 @@ import { db } from "../Firebase";
 import {
   doc,
   getDoc,
+  setDoc,
+  arrayUnion,
   collection,
   query,
   where,
@@ -107,6 +109,51 @@ function Reviews() {
     }
   };
 
+  /* !! function to handle the counts of the thumbs ups and thumbs down */
+  const handleReaction = async (reviewId, reaction) => {
+    try {
+      const reviewDocRef = doc(db, "reviews", reviewId);
+      const reviewDoc = await getDoc(reviewDocRef);
+  
+      if (reviewDoc.exists()) {
+        const reactionsRef = doc(db, "reviews", reviewId, "reactions", currentUID);
+        const reactionDoc = await getDoc(reactionsRef);
+  
+        let updatedReactions = {
+          thumbsUp: reviewDoc.data().thumbsUp || [],
+          thumbsDown: reviewDoc.data().thumbsDown || [],
+        };
+  
+        if (reactionDoc.exists()) {
+          // User has already reacted, remove their reaction
+          const existingReaction = reactionDoc.data().reaction;
+          if (existingReaction === "thumbsUp") {
+            updatedReactions.thumbsUp = updatedReactions.thumbsUp.filter(
+              (uid) => uid !== currentUID
+            );
+          } else if (existingReaction === "thumbsDown") {
+            updatedReactions.thumbsDown = updatedReactions.thumbsDown.filter(
+              (uid) => uid !== currentUID
+            );
+          }
+        }
+  
+        if (reaction === "thumbsUp") {
+          updatedReactions.thumbsUp = arrayUnion(currentUID);
+        } else if (reaction === "thumbsDown") {
+          updatedReactions.thumbsDown = arrayUnion(currentUID);
+        }
+  
+        await setDoc(reactionsRef, { reaction }, { merge: true });
+        await updateDoc(reviewDocRef, updatedReactions);
+      } else {
+        console.log("No such review exists!");
+      }
+    } catch (error) {
+      console.error("Error handling reaction:", error);
+    }
+  };
+
   /* !! function to handle removing the review */
   const deleteReview = async (reviewId, reviewRating) => {
     try {
@@ -141,27 +188,14 @@ function Reviews() {
       console.error("Error deleting review:", error);
     }
   };
-  
+
   {
     /* states for the thumbs up and thumbs down buttons 
 will need to add logic in Firebase so that the amount of upvotes and downvotes
 can be displayed*/
   }
-  const handleThumbsDown = (reviewId) => {
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === reviewId
-          ? {
-              ...review,
-              thumbsDownColor: !review.thumbsDownColor,
-              thumbsUpColor: false,
-            }
-          : review
-      )
-    );
-  };
-
-  const handleThumbsUp = (reviewId) => {
+  const handleThumbsUp = async (reviewId) => {
+    await handleReaction(reviewId, "thumbsUp");
     setReviews((prevReviews) =>
       prevReviews.map((review) =>
         review.id === reviewId
@@ -173,6 +207,45 @@ can be displayed*/
           : review
       )
     );
+    const updatedReviews = await fetchUpdatedReviews(id);
+    setReviews(updatedReviews);
+  };
+  
+  const handleThumbsDown = async (reviewId) => {
+    await handleReaction(reviewId, "thumbsDown");
+    setReviews((prevReviews) =>
+      prevReviews.map((review) =>
+        review.id === reviewId
+          ? {
+              ...review,
+              thumbsDownColor: !review.thumbsDownColor,
+              thumbsUpColor: false,
+            }
+          : review
+      )
+    );
+    const updatedReviews = await fetchUpdatedReviews(id);
+    setReviews(updatedReviews);
+  };
+
+  const fetchUpdatedReviews = async (dormId) => {
+    try {
+      const reviewsQuery = query(
+        collection(db, "reviews"),
+        where("dormId", "==", dormId)
+      );
+      const querySnapshot = await getDocs(reviewsQuery);
+      const updatedReviews = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        thumbsUpColor: false,
+        thumbsDownColor: false,
+      }));
+      return updatedReviews;
+    } catch (error) {
+      console.error("Error fetching updated reviews:", error);
+      return [];
+    }
   };
 
   const handleImageClick = (imageUrl) => {
@@ -277,12 +350,16 @@ can be displayed*/
               weight="duotone"
               onClick={() => handleThumbsDown(review.id)}
             />
+            <Text ml={2}>
+              {review.thumbsDown ? review.thumbsDown.length : 0}
+            </Text>
             <ThumbsUp
               size={28}
               color={review.thumbsUpColor ? "#00f900" : "#000000"}
               weight="duotone"
               onClick={() => handleThumbsUp(review.id)}
             />
+            <Text ml={2}>{review.thumbsUp ? review.thumbsUp.length : 0}</Text>
           </Box>
         </Box>
       ))}
@@ -312,3 +389,4 @@ can be displayed*/
 }
 
 export default Reviews;
+
