@@ -39,8 +39,14 @@ function Reviews() {
   const [reviewListings, setReviewListings] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [currentUID, setCurrentUID] = useState(null);
-  const [thumbsUpColors, setThumbsUpColors] = useColorState("thumbsUpColors", {});
-  const [thumbsDownColors, setThumbsDownColors] = useColorState("thumbsDownColors", {});
+  const [thumbsUpColors, setThumbsUpColors] = useColorState(
+    "thumbsUpColors",
+    {}
+  );
+  const [thumbsDownColors, setThumbsDownColors] = useColorState(
+    "thumbsDownColors",
+    {}
+  );
   const [selectedImage, setSelectedImage] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -161,7 +167,6 @@ function Reviews() {
     }
   };
 
-
   /* !! function to handle removing the review */
   const deleteReview = async (reviewId, reviewRating) => {
     try {
@@ -215,7 +220,7 @@ can be displayed*/
     const updatedReviews = await fetchUpdatedReviews(id);
     setReviews(updatedReviews);
   };
-  
+
   const handleThumbsDown = async (reviewId) => {
     await handleReaction(reviewId, "thumbsDown");
     setThumbsDownColors((prevColors) => ({
@@ -230,8 +235,6 @@ can be displayed*/
     setReviews(updatedReviews);
   };
 
-
-  
   const fetchUpdatedReviews = async (dormId) => {
     try {
       const reviewsQuery = query(
@@ -346,22 +349,49 @@ can be displayed*/
             )}
             <Warning size={28} color="#0432ff" weight="duotone" />
             {/*on click should change colors, default should be black */}
-            <ThumbsDown
-              size={28}
-              color={thumbsDownColors[review.id] ? "#ff2600" : "#000000"}
-              weight="duotone"
-              onClick={() => handleThumbsDown(review.id)}
-            />
-            <Text ml={2}>
-              {review.thumbsDown ? review.thumbsDown.length : 0}
-            </Text>
-            <ThumbsUp
-              size={28}
-              color={thumbsUpColors[review.id] ? "#00f900" : "#000000"}
-              weight="duotone"
-              onClick={() => handleThumbsUp(review.id)}
-            />
-            <Text ml={2}>{review.thumbsUp ? review.thumbsUp.length : 0}</Text>
+            {currentUID ? (
+              <>
+                <ThumbsDown
+                  size={28}
+                  color={thumbsDownColors[review.id] ? "#ff2600" : "#000000"}
+                  weight="duotone"
+                  onClick={() => handleThumbsDown(review.id)}
+                />
+                <Text ml={2}>
+                  {review.thumbsDown ? review.thumbsDown.length : 0}
+                </Text>
+                <ThumbsUp
+                  size={28}
+                  color={thumbsUpColors[review.id] ? "#00f900" : "#000000"}
+                  weight="duotone"
+                  onClick={() => handleThumbsUp(review.id)}
+                />
+                <Text ml={2}>
+                  {review.thumbsUp ? review.thumbsUp.length : 0}
+                </Text>
+              </>
+            ) : (
+              <>
+                <ThumbsDown
+                  size={28}
+                  color="#000000"
+                  weight="duotone"
+                  isdisabled="true"
+                />
+                <Text ml={2}>
+                  {review.thumbsDown ? review.thumbsDown.length : 0}
+                </Text>
+                <ThumbsUp
+                  size={28}
+                  color="#000000"
+                  weight="duotone"
+                  isdisable="true"
+                />
+                <Text ml={2}>
+                  {review.thumbsUp ? review.thumbsUp.length : 0}
+                </Text>
+              </>
+            )}
           </Box>
         </Box>
       ))}
@@ -391,3 +421,4 @@ can be displayed*/
 }
 
 export default Reviews;
+
