@@ -421,4 +421,3 @@ can be displayed*/
 }
 
 export default Reviews;
-
