@@ -222,15 +222,23 @@ function Reviews() {
       const dormSnapshot = await getDoc(dormDocRef);
       if (dormSnapshot.exists()) {
         const dormData = dormSnapshot.data();
-        var newAvg =
-          (dormData.rating * dormData.entries - reviewRating) /
-          (dormData.entries - 1);
-        newAvg = parseFloat(newAvg.toFixed(2));
 
-        await updateDoc(dormDocRef, {
-          rating: newAvg,
-          entries: dormData.entries - 1,
-        });
+        if ((dormData.entries - 1) === 0) {
+          await updateDoc(dormDocRef, {
+            rating: 0,
+            entries: 0
+          });
+        } else {
+          var newAvg =
+            (dormData.rating * dormData.entries - reviewRating) /
+            (dormData.entries - 1);
+          newAvg = parseFloat(newAvg.toFixed(2));
+
+          await updateDoc(dormDocRef, {
+            rating: newAvg,
+            entries: dormData.entries - 1,
+          });
+        }
       } else {
         console.log("No such dorm exists!");
       }
