@@ -4,9 +4,28 @@ import Dorm from './Dorm';
 import { db, storage } from '../Firebase'
 import { collection, getDocs } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage'
+import { 
+  Box, 
+  Text,
+  Flex, 
+  Checkbox,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from '@chakra-ui/react';
+import { Check } from "@phosphor-icons/react";
 
 function Listings() {
   const [dorms, setDorms] = useState([]);
+  const [selectedCampus, setSelectedCampus] = useState([]);
+  const [filteredDorms, setFilteredDorms] = useState([]);
+  useEffect(() => {
+    setFilteredDorms(dorms);
+  }, [dorms]);
+
+  const [maxPrice, setMaxPrice] = useState(12000);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,19 +53,80 @@ function Listings() {
     }
   };
 
+  const updateFilter = (campuses, maxPrice) => {
+    let filteredDorms = dorms;
+
+    if (campuses.length > 0) {
+      filteredDorms = filteredDorms.filter(dorm => campuses.includes(dorm.campus));
+    }
+
+    filteredDorms = filteredDorms.filter(dorm => (parseInt(dorm.price) <= parseInt(maxPrice)));
+    setFilteredDorms(filteredDorms);
+  };
+
+const updateCheckboxes = (campus) => {
+    console.log(campus);
+    const updatedCampus = [...selectedCampus];
+    const index = updatedCampus.indexOf(campus);
+
+    if (index === -1) {
+        updatedCampus.push(campus);
+    } else {
+        updatedCampus.splice(index, 1);
+    }
+
+    setSelectedCampus(updatedCampus);
+};
+
+useEffect(() => {
+    updateFilter(selectedCampus, maxPrice);
+}, [selectedCampus, maxPrice]);
+
+const updateMaxPrice = (maxPrice) => {
+  setMaxPrice(maxPrice);
+}
+
   return (
-    <div className="dorms-container">  
-      {dorms.map((dorm) => (
-        <Dorm 
-          key={dorm.id}
-          id={dorm.id}
-          name={dorm.name} 
-          campus={dorm.campus} 
-          price_range={dorm.price} 
-          rating={dorm.rating} 
-          photo={dorm.img_url}
-        />
-      ))}
+    <div>
+      <Flex>
+          <Box display={'flex'}
+          flexDir={'column'}
+          border={'1px solid grey'}
+          position={'absolute'}
+          left={'0'}
+          mt={'3em'}
+          ml={'3em'}
+          maxW={'md'}
+          p={'1em'}
+          rounded={'md'}>
+              <Text borderBottom="1px solid lightgrey" fontSize="1.3em" fontWeight="600">Filters</Text>
+              <Text fontWeight="600">Location</Text>
+              <Checkbox onChange={() => updateCheckboxes("North")}>North Campus</Checkbox>
+              <Checkbox onChange={() => updateCheckboxes("South")}>South Campus</Checkbox>
+              <Text mt='1em' fontWeight="600">Price</Text>
+              <NumberInput defaultValue={0} min={0} max={12000} onChange={(value) => updateMaxPrice(parseInt(value))}>
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+          </Box>
+          </Flex>
+
+      <div className="dorms-container">  
+        {filteredDorms.map((dorm) => (
+          <Dorm 
+            key={dorm.id}
+            id={dorm.id}
+            name={dorm.name} 
+            campus={dorm.campus} 
+            price_range={dorm.price} 
+            rating={dorm.rating} 
+            photo={dorm.img_url}
+          />
+        ))}
+      </div>
     </div>
   );
 }

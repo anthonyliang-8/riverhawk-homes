@@ -31,6 +31,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Checkbox
 } from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
@@ -49,6 +50,12 @@ function Reviews() {
   );
   const [selectedImage, setSelectedImage] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [selectedStars, setSelectedStars] = useState([]);
+  const [filteredReviews, setFilteredReviews] = useState([]);
+  useEffect(() => {
+    setFilteredReviews(reviews);
+  }, [reviews]);
 
   /* hook to get all user IDs, implemented this just so
   we can seperate it from the admin UID */
@@ -116,6 +123,40 @@ function Reviews() {
     }
   };
 
+  const updateFilter = (stars) => { // function to display only the filtered reviews
+    if (stars.length === 0) {
+      setFilteredReviews(reviews);
+    } else {
+      const filteredReviews = reviews.filter(review => stars.includes(parseInt(review.rating)));
+      setFilteredReviews(filteredReviews);
+    }
+  };
+
+  const updateCheckbox = (star) => { // function to keep track of which filters are checked/unchecked
+    const updatedStars = [...selectedStars];
+    const index = updatedStars.indexOf(star);
+    if (index === -1) {
+      updatedStars.push(star);
+    } else { 
+      updatedStars.splice(index, 1);
+    }
+
+    setSelectedStars(updatedStars);
+  }
+
+  useEffect(() => {
+    updateFilter(selectedStars);
+  }, [selectedStars]);
+
+  const drawCheckboxes = () => { // function to draw the checkboxes with the needed functionality for filtering
+    const checkboxes = [];
+    for (let i = 1; i <= 5; i++) {
+        checkboxes.push( <Checkbox key={i} onChange={() => updateCheckbox(i)}>{i} Star</Checkbox> );
+    }
+
+    return checkboxes;
+  };
+
   /* !! function to handle the counts of the thumbs ups and thumbs down */
   const handleReaction = async (reviewId, reaction) => {
     try {
@@ -181,15 +222,23 @@ function Reviews() {
       const dormSnapshot = await getDoc(dormDocRef);
       if (dormSnapshot.exists()) {
         const dormData = dormSnapshot.data();
-        var newAvg =
-          (dormData.rating * dormData.entries - reviewRating) /
-          (dormData.entries - 1);
-        newAvg = parseFloat(newAvg.toFixed(2));
 
-        await updateDoc(dormDocRef, {
-          rating: newAvg,
-          entries: dormData.entries - 1,
-        });
+        if ((dormData.entries - 1) === 0) {
+          await updateDoc(dormDocRef, {
+            rating: 0,
+            entries: 0
+          });
+        } else {
+          var newAvg =
+            (dormData.rating * dormData.entries - reviewRating) /
+            (dormData.entries - 1);
+          newAvg = parseFloat(newAvg.toFixed(2));
+
+          await updateDoc(dormDocRef, {
+            rating: newAvg,
+            entries: dormData.entries - 1,
+          });
+        }
       } else {
         console.log("No such dorm exists!");
       }
@@ -300,8 +349,24 @@ can be displayed*/
           </Button>
         </Container>
       </Box>
+      <Box display="flex" flexDirection="column" alignItems="flex-start">
+        <Box display={'flex'}
+          flexDir={'column'}
+          border={'1px solid grey'}
+          position={'absolute'}
+          left={'0'}
+          mt={'0'}
+          ml={'3vw'}
+          maxW={'md'}
+          px={'1.5vw'}
+          py={'1vw'}
+          rounded="md">
+            <Text borderBottom={"1px solid lightgrey"} mb={'0.5vw'} fontSize={'1.4em'}>Filter Reviews</Text>
+            {drawCheckboxes()}
+        </Box>
+      </Box>
       {/* Review components are mapped and displayed here */}
-      {reviews.map((review) => (
+      {filteredReviews.map((review) => (
         <Box
           border={"1px solid lightgrey"}
           borderRadius={"8px"}
