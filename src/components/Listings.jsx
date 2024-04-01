@@ -139,7 +139,7 @@ function Listings() {
         display={"flex"}
         flexDir={'row'}
         flexWrap={'wrap'}
-        mt={"3em"}
+        mt={"2em"} // set to 2em since the dorm component has mt=1em
         alignItems={"center"}
         justifyContent={'space-evenly'}
       >
