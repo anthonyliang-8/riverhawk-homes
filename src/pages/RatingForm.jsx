@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import RatingStars from "../components/RatingStars";
 import {
   Box,
@@ -8,25 +8,30 @@ import {
   Button,
   FormControl,
   FormLabel,
+  useToast, // Import useToast from Chakra UI
 } from "@chakra-ui/react";
-import { storage, db } from "../Firebase";
+import { storage, db, auth } from "../Firebase"; // Import auth from Firebase
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import { Star } from "@phosphor-icons/react";
+import { onAuthStateChanged } from "firebase/auth"; // Import onAuthStateChanged
 
 // Function to update the avg rating. It updates the database whenever a rating is submitted
 // I added some imports to make this work.
 async function updateAvgRating(db, id, rating) {
   try {
-    const dormDocRef = doc(db, 'dorms', id);
+    const dormDocRef = doc(db, "dorms", id);
     const dormSnapshot = await getDoc(dormDocRef);
 
     if (dormSnapshot.exists()) {
       const dormData = dormSnapshot.data();
-      var newAvg = ((dormData.rating * dormData.entries) + rating) / (dormData.entries + 1);
+      var newAvg =
+        (dormData.rating * dormData.entries + rating) / (dormData.entries + 1);
       newAvg = parseFloat(newAvg.toFixed(2));
-      
-      await updateDoc(dormDocRef, {rating: newAvg, entries: (dormData.entries + 1)}); // update db
+
+      await updateDoc(dormDocRef, {
+        rating: newAvg,
+        entries: dormData.entries + 1,
+      }); // update db
     } else {
       console.log("No such dorm exists!");
     }
@@ -37,15 +42,40 @@ async function updateAvgRating(db, id, rating) {
 
 const RatingForm = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState("");
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for authentication
 
+  const toast = useToast(); // Initialize the Toast
+
+  useEffect(() => {
+    // Listen for changes in the user's authentication state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user); // Update the authentication state
+    });
+
+    // Clean up the listener on component unmount
+    return () => unsubscribe();
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const imageUrls = [];
+
+    if (!isAuthenticated) {
+      // show a Toast notification if the user is not authenticated
+      toast({
+        title: "Submission Error: ",
+        description: "You need to be logged in to submit a review.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return; // exit function
+    }
 
     // upload images to Firebase Storage
     for (const image of images) {
@@ -84,6 +114,14 @@ const RatingForm = () => {
       });
       console.log("Review added with ID:", newReview.id);
       await updateAvgRating(db, id, parseInt(rating)); // update avg rating of dorm
+      toast({
+        title: "Success! ",
+        description: "Redirecting to home page.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/"); // redirect back to home
     } catch (error) {
       console.error("Error adding review:", error);
     }
