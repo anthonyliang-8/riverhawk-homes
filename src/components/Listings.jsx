@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import '../css/styles.css'
-import Dorm from './Dorm';
-import { db, storage } from '../Firebase'
-import { collection, getDocs } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage'
-import { 
-  Box, 
+import React, { useState, useEffect } from "react";
+import "../css/styles.css";
+import Dorm from "./Dorm";
+import { db, storage } from "../Firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import {
+  Box,
   Text,
-  Flex, 
+  Flex,
   Checkbox,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-} from '@chakra-ui/react';
+  RangeSlider,
+  RangeSliderTrack,
+  RangeSliderFilledTrack,
+  RangeSliderThumb,
+} from "@chakra-ui/react";
 import { Check } from "@phosphor-icons/react";
 
 function Listings() {
   const [dorms, setDorms] = useState([]);
   const [selectedCampus, setSelectedCampus] = useState([]);
   const [filteredDorms, setFilteredDorms] = useState([]);
+  const [currentPriceRange, setCurrentPriceRange] = useState([8710, 12000]);
+
   useEffect(() => {
     setFilteredDorms(dorms);
   }, [dorms]);
@@ -29,7 +30,7 @@ function Listings() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const dormsCollectionRef = collection(db, 'dorms'); 
+      const dormsCollectionRef = collection(db, "dorms");
       const docs = await getDocs(dormsCollectionRef);
       const data = docs.docs.map(async (doc) => {
         const dormData = doc.data();
@@ -48,86 +49,125 @@ function Listings() {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      console.error('Error getting image URL:', error);
-      return ''; // return an empty string if error caught
+      console.error("Error getting image URL:", error);
+      return ""; // return an empty string if error caught
     }
   };
 
-  const updateFilter = (campuses, maxPrice) => {
+  const updateFilter = (campuses, minPrice, maxPrice) => {
     let filteredDorms = dorms;
 
     if (campuses.length > 0) {
-      filteredDorms = filteredDorms.filter(dorm => campuses.includes(dorm.campus));
+      filteredDorms = filteredDorms.filter((dorm) =>
+        campuses.includes(dorm.campus)
+      );
     }
 
-    filteredDorms = filteredDorms.filter(dorm => (parseInt(dorm.price) <= parseInt(maxPrice)));
+    filteredDorms = filteredDorms.filter(
+      (dorm) =>
+        parseInt(dorm.price) >= parseInt(minPrice) &&
+        parseInt(dorm.price) <= parseInt(maxPrice)
+    );
     setFilteredDorms(filteredDorms);
   };
 
-const updateCheckboxes = (campus) => {
+  const updateCheckboxes = (campus) => {
     console.log(campus);
     const updatedCampus = [...selectedCampus];
     const index = updatedCampus.indexOf(campus);
 
     if (index === -1) {
-        updatedCampus.push(campus);
+      updatedCampus.push(campus);
     } else {
-        updatedCampus.splice(index, 1);
+      updatedCampus.splice(index, 1);
     }
 
     setSelectedCampus(updatedCampus);
-};
+  };
 
-useEffect(() => {
-    updateFilter(selectedCampus, maxPrice);
-}, [selectedCampus, maxPrice]);
+  useEffect(() => {
+    updateFilter(selectedCampus, 8710, maxPrice);
+  }, [selectedCampus, maxPrice]);
 
-const updateMaxPrice = (maxPrice) => {
-  setMaxPrice(maxPrice);
-}
+  const updateMaxPrice = (range) => {
+    const [minPrice, maxPrice] = range;
+    setCurrentPriceRange(range);
+    updateFilter(selectedCampus, minPrice, maxPrice);
+  };
 
   return (
-    <div>
-      <Flex>
-          <Box display={'flex'}
-          flexDir={'column'}
-          border={'1px solid grey'}
-          position={'absolute'}
-          left={'0'}
-          mt={'3em'}
-          ml={'3em'}
-          maxW={'md'}
-          p={'1em'}
-          rounded={'md'}>
-              <Text borderBottom="1px solid lightgrey" fontSize="1.3em" fontWeight="600">Filters</Text>
-              <Text fontWeight="600">Location</Text>
-              <Checkbox onChange={() => updateCheckboxes("North")}>North Campus</Checkbox>
-              <Checkbox onChange={() => updateCheckboxes("South")}>South Campus</Checkbox>
-              <Text mt='1em' fontWeight="600">Price</Text>
-              <NumberInput defaultValue={0} min={0} max={12000} onChange={(value) => updateMaxPrice(parseInt(value))}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-          </Box>
-          </Flex>
+    <Flex>
+      {/* flexbox for filter component */}
+      <Box
+        display={"flex"}
+        flexDir={"column"}
+        border={"1px solid grey"}
+        mt={"3em"}
+        mr={"3em"}
+        minW={"16em"}
+        minH={"10em"}
+        maxH={"20em"}
+        p={"1em"}
+        rounded={"md"}
+      >
+        <Text
+          borderBottom="1px solid lightgrey"
+          fontSize="1.3em"
+          fontWeight="600"
+        >
+          Filters
+        </Text>
+        <Text fontWeight="600">Location</Text>
+        <Checkbox onChange={() => updateCheckboxes("North")}>
+          North Campus
+        </Checkbox>
+        <Checkbox onChange={() => updateCheckboxes("South")}>
+          South Campus
+        </Checkbox>
+        {/* probably need to implement filtering by rating/stars here */}
+        <Text mt="1em" fontWeight="600">
+          Price
+        </Text>
+        {/* slider to handle filtering the dorms by price */}
+        <RangeSlider
+          defaultValue={[8710, 12000]}
+          min={8710}
+          max={12000}
+          step={100}
+          onChange={(val) => updateMaxPrice(val)}
+        >
+          <RangeSliderTrack>
+            <RangeSliderFilledTrack />
+          </RangeSliderTrack>
+          <RangeSliderThumb index={0} />
+          <RangeSliderThumb index={1} />
+        </RangeSlider>
+        <Text>
+          ${currentPriceRange[0]} - ${currentPriceRange[1]}
+        </Text>
+      </Box>
 
-      <div className="dorms-container">  
+      <Box
+        display={"flex"}
+        flexDir={"row"}
+        flexWrap={"wrap"}
+        mt={"2em"} // set to 2em since the dorm component has mt=1em
+        alignItems={"center"}
+        justifyContent={"space-evenly"}
+      >
         {filteredDorms.map((dorm) => (
-          <Dorm 
+          <Dorm
             key={dorm.id}
             id={dorm.id}
-            name={dorm.name} 
-            campus={dorm.campus} 
-            price_range={dorm.price} 
-            rating={dorm.rating} 
+            name={dorm.name}
+            campus={dorm.campus}
+            price_range={dorm.price}
+            rating={dorm.rating}
             photo={dorm.img_url}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Flex>
   );
 }
 
