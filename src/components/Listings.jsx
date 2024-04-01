@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import '../css/styles.css'
-import Dorm from './Dorm';
-import { db, storage } from '../Firebase'
-import { collection, getDocs } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage'
-import { 
-  Box, 
+import React, { useState, useEffect } from "react";
+import "../css/styles.css";
+import Dorm from "./Dorm";
+import { db, storage } from "../Firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import {
+  Box,
   Text,
-  Flex, 
+  Flex,
   Checkbox,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 import { Check } from "@phosphor-icons/react";
 
 function Listings() {
@@ -29,7 +29,7 @@ function Listings() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const dormsCollectionRef = collection(db, 'dorms'); 
+      const dormsCollectionRef = collection(db, "dorms");
       const docs = await getDocs(dormsCollectionRef);
       const data = docs.docs.map(async (doc) => {
         const dormData = doc.data();
@@ -48,8 +48,8 @@ function Listings() {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      console.error('Error getting image URL:', error);
-      return ''; // return an empty string if error caught
+      console.error("Error getting image URL:", error);
+      return ""; // return an empty string if error caught
     }
   };
 
@@ -57,77 +57,105 @@ function Listings() {
     let filteredDorms = dorms;
 
     if (campuses.length > 0) {
-      filteredDorms = filteredDorms.filter(dorm => campuses.includes(dorm.campus));
+      filteredDorms = filteredDorms.filter((dorm) =>
+        campuses.includes(dorm.campus)
+      );
     }
 
-    filteredDorms = filteredDorms.filter(dorm => (parseInt(dorm.price) <= parseInt(maxPrice)));
+    filteredDorms = filteredDorms.filter(
+      (dorm) => parseInt(dorm.price) <= parseInt(maxPrice)
+    );
     setFilteredDorms(filteredDorms);
   };
 
-const updateCheckboxes = (campus) => {
+  const updateCheckboxes = (campus) => {
     console.log(campus);
     const updatedCampus = [...selectedCampus];
     const index = updatedCampus.indexOf(campus);
 
     if (index === -1) {
-        updatedCampus.push(campus);
+      updatedCampus.push(campus);
     } else {
-        updatedCampus.splice(index, 1);
+      updatedCampus.splice(index, 1);
     }
 
     setSelectedCampus(updatedCampus);
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     updateFilter(selectedCampus, maxPrice);
-}, [selectedCampus, maxPrice]);
+  }, [selectedCampus, maxPrice]);
 
-const updateMaxPrice = (maxPrice) => {
-  setMaxPrice(maxPrice);
-}
+  const updateMaxPrice = (maxPrice) => {
+    setMaxPrice(maxPrice);
+  };
 
   return (
-    <div>
-      <Flex>
-          <Box display={'flex'}
-          flexDir={'column'}
-          border={'1px solid grey'}
-          position={'absolute'}
-          left={'0'}
-          mt={'3em'}
-          ml={'3em'}
-          maxW={'md'}
-          p={'1em'}
-          rounded={'md'}>
-              <Text borderBottom="1px solid lightgrey" fontSize="1.3em" fontWeight="600">Filters</Text>
-              <Text fontWeight="600">Location</Text>
-              <Checkbox onChange={() => updateCheckboxes("North")}>North Campus</Checkbox>
-              <Checkbox onChange={() => updateCheckboxes("South")}>South Campus</Checkbox>
-              <Text mt='1em' fontWeight="600">Price</Text>
-              <NumberInput defaultValue={0} min={0} max={12000} onChange={(value) => updateMaxPrice(parseInt(value))}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-          </Box>
-          </Flex>
+    <Flex >
+      {/* flexbox for filter component */}
+      <Box
+        display={"flex"}
+        flexDir={"column"}
+        border={"1px solid grey"}
+        mt={"3em"}
+        mr={"3em"}
+        minW={"15em"}
+        maxH={"20em"}
+        p={"1em"}
+        rounded={"md"}
+      >
+        <Text
+          borderBottom="1px solid lightgrey"
+          fontSize="1.3em"
+          fontWeight="600"
+        >
+          Filters
+        </Text>
+        <Text fontWeight="600">Location</Text>
+        <Checkbox onChange={() => updateCheckboxes("North")}>
+          North Campus
+        </Checkbox>
+        <Checkbox onChange={() => updateCheckboxes("South")}>
+          South Campus
+        </Checkbox>
+        <Text mt="1em" fontWeight="600">
+          Price
+        </Text>
+        <NumberInput
+          defaultValue={0}
+          min={0}
+          max={12000}
+          onChange={(value) => updateMaxPrice(parseInt(value))}
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+      </Box>
 
-      <div className="dorms-container">  
+      <Box
+        display={"flex"}
+        flexDir={'row'}
+        flexWrap={'wrap'}
+        mt={"3em"}
+        alignItems={"center"}
+        justifyContent={'space-evenly'}
+      >
         {filteredDorms.map((dorm) => (
-          <Dorm 
+          <Dorm
             key={dorm.id}
             id={dorm.id}
-            name={dorm.name} 
-            campus={dorm.campus} 
-            price_range={dorm.price} 
-            rating={dorm.rating} 
+            name={dorm.name}
+            campus={dorm.campus}
+            price_range={dorm.price}
+            rating={dorm.rating}
             photo={dorm.img_url}
           />
         ))}
-      </div>
-    </div>
+      </Box>
+    </Flex>
   );
 }
 
