@@ -1,4 +1,3 @@
-import HomePageFilter from "../components/HomePageFilter";
 import Listings from "../components/Listings";
 
 import { Flex } from "@chakra-ui/react";
