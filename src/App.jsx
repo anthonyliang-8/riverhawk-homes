@@ -8,7 +8,7 @@ import Reviews from "./pages/Reviews";
 import RatingForm from "./pages/RatingForm";
 import ProfilePage from "./pages/ProfilePage";
 import { Router, Routes, Route } from "react-router-dom";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 
@@ -18,17 +18,19 @@ function App() {
   return (
     <Flex minH="100vh" direction="column">
       <Navbar />
-      <Routes>
-        {/*ALL ROUTES TO PAGES BELONG HERE */}
-        <Route path="/" element={<Home />} />
-        <Route path="signup" element={<SignUp />} />
-        <Route path="login" element={<Login />} />
-        <Route path="dorm/:id" element={<Reviews />} />
-        <Route path="dorm/:id/rate" element={<RatingForm />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
+      <Box flex="1 0 auto">
+        <Routes>
+          {/* ALL ROUTES TO PAGES BELONG HERE */}
+          <Route path="/" element={<Home />} />
+          <Route path="signup" element={<SignUp />} />
+          <Route path="login" element={<Login />} />
+          <Route path="dorm/:id" element={<Reviews />} />
+          <Route path="dorm/:id/rate" element={<RatingForm />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </Box>
       {/* react only uses one parent element*/}
       <Footer />
     </Flex>

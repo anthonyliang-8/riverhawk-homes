@@ -9,11 +9,10 @@ import {
   Text,
   Flex,
   Checkbox,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
+  RangeSlider,
+  RangeSliderTrack,
+  RangeSliderFilledTrack,
+  RangeSliderThumb,
 } from "@chakra-ui/react";
 import { Check } from "@phosphor-icons/react";
 
@@ -21,6 +20,8 @@ function Listings() {
   const [dorms, setDorms] = useState([]);
   const [selectedCampus, setSelectedCampus] = useState([]);
   const [filteredDorms, setFilteredDorms] = useState([]);
+  const [currentPriceRange, setCurrentPriceRange] = useState([8710, 12000]);
+
   useEffect(() => {
     setFilteredDorms(dorms);
   }, [dorms]);
@@ -53,7 +54,7 @@ function Listings() {
     }
   };
 
-  const updateFilter = (campuses, maxPrice) => {
+  const updateFilter = (campuses, minPrice, maxPrice) => {
     let filteredDorms = dorms;
 
     if (campuses.length > 0) {
@@ -63,7 +64,9 @@ function Listings() {
     }
 
     filteredDorms = filteredDorms.filter(
-      (dorm) => parseInt(dorm.price) <= parseInt(maxPrice)
+      (dorm) =>
+        parseInt(dorm.price) >= parseInt(minPrice) &&
+        parseInt(dorm.price) <= parseInt(maxPrice)
     );
     setFilteredDorms(filteredDorms);
   };
@@ -83,15 +86,17 @@ function Listings() {
   };
 
   useEffect(() => {
-    updateFilter(selectedCampus, maxPrice);
+    updateFilter(selectedCampus, 8710, maxPrice);
   }, [selectedCampus, maxPrice]);
 
-  const updateMaxPrice = (maxPrice) => {
-    setMaxPrice(maxPrice);
+  const updateMaxPrice = (range) => {
+    const [minPrice, maxPrice] = range;
+    setCurrentPriceRange(range);
+    updateFilter(selectedCampus, minPrice, maxPrice);
   };
 
   return (
-    <Flex >
+    <Flex>
       {/* flexbox for filter component */}
       <Box
         display={"flex"}
@@ -99,7 +104,8 @@ function Listings() {
         border={"1px solid grey"}
         mt={"3em"}
         mr={"3em"}
-        minW={"15em"}
+        minW={"16em"}
+        minH={"10em"}
         maxH={"20em"}
         p={"1em"}
         rounded={"md"}
@@ -118,30 +124,36 @@ function Listings() {
         <Checkbox onChange={() => updateCheckboxes("South")}>
           South Campus
         </Checkbox>
+        {/* probably need to implement filtering by rating/stars here */}
         <Text mt="1em" fontWeight="600">
           Price
         </Text>
-        <NumberInput
-          defaultValue={0}
-          min={0}
+        {/* slider to handle filtering the dorms by price */}
+        <RangeSlider
+          defaultValue={[8710, 12000]}
+          min={8710}
           max={12000}
-          onChange={(value) => updateMaxPrice(parseInt(value))}
+          step={100}
+          onChange={(val) => updateMaxPrice(val)}
         >
-          <NumberInputField />
-          <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-          </NumberInputStepper>
-        </NumberInput>
+          <RangeSliderTrack>
+            <RangeSliderFilledTrack />
+          </RangeSliderTrack>
+          <RangeSliderThumb index={0} />
+          <RangeSliderThumb index={1} />
+        </RangeSlider>
+        <Text>
+          ${currentPriceRange[0]} - ${currentPriceRange[1]}
+        </Text>
       </Box>
 
       <Box
         display={"flex"}
-        flexDir={'row'}
-        flexWrap={'wrap'}
+        flexDir={"row"}
+        flexWrap={"wrap"}
         mt={"2em"} // set to 2em since the dorm component has mt=1em
         alignItems={"center"}
-        justifyContent={'space-evenly'}
+        justifyContent={"space-evenly"}
       >
         {filteredDorms.map((dorm) => (
           <Dorm
