@@ -71,7 +71,7 @@ const RatingForm = () => {
         title: "Submission Error: ",
         description: "You need to be logged in to submit a review.",
         status: "error",
-        duration: 5000,
+        duration: 8000,
         isClosable: true,
       });
       return; // exit function
