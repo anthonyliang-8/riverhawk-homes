@@ -27,7 +27,7 @@ const Navbar = () => {
 
   return (
     <Box>
-      <Flex pt={'1.5em'} pb={'1.5em'} alignItems="center" bgColor={"#0077b6"}>
+      <Flex pt={"1.5em"} pb={"1.5em"} alignItems="center" bgColor={"#0077b6"}>
         {/* this is the logo, probably need to replace this code with an svg of the logo and the text inside instead*/}
         <Box display={"flex"} alignItems={"center"} ml={"5em"}>
           <Image src={RiverhawkLogo} width={"5%"} height={"auto"}></Image>
@@ -38,11 +38,13 @@ const Navbar = () => {
           </Link>
         </Box>
         <Spacer />
-        <Box display={'flex'} alignItems={'center'} mr={'5em'}>
+        <Box display={"flex"} alignItems={"center"} mr={"5em"}>
           {!isLoggedIn && (
             <Box marginRight={"1em"}>
               <Link to="/login">
-                <Text color={'white'} fontWeight={"600"}>Login</Text>
+                <Text color={"white"} fontWeight={"600"}>
+                  Login
+                </Text>
               </Link>
             </Box>
           )}
@@ -52,11 +54,12 @@ const Navbar = () => {
               borderRadius={"8px"}
               p={1}
               fontWeight={"600"}
-              color="white"
+              bg={"white"}
+              color="#0077b6"
               transition={"all 0.3s ease-out"}
               _hover={{
-                bg: "white",
-                color: "#0077b6",
+                bg: "#0077b6",
+                color: "white",
                 transition: "all 0.3s",
               }}
             >

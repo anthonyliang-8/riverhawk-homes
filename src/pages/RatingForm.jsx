@@ -49,8 +49,7 @@ const RatingForm = () => {
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for authentication
-
-  const toast = useToast(); // Initialize the Toast
+  const toast = useToast();
 
   useEffect(() => {
     // Listen for changes in the user's authentication state

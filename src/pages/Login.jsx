@@ -8,6 +8,8 @@ import {
   useToast,
   Box,
   Link,
+  Text,
+  Flex
 } from "@chakra-ui/react";
 import { auth } from "../Firebase";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +49,7 @@ function Login() {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/');
+      navigate("/");
     } catch (error) {
       setError(error.message);
       toast({
@@ -63,7 +65,16 @@ function Login() {
   };
 
   return (
-    <div className="user-div">
+    <Box boxSize={'sm'} margin={'auto auto'} mt={'2em'} mb={'2em'}>
+      <Box mb={"2em"}>
+        <Text fontWeight={"bold"} fontSize={"40px"} textAlign={"center"}>
+          Login
+        </Text>
+        <Text fontWeight={"300"} textAlign={"center"}>
+          Log back into your account.
+        </Text>
+      </Box>
+      {/* shows display name if logged in */}
       {displayName ? (
         <Box marginRight={"1em"}>
           <Link to="/profile">{displayName}</Link>
@@ -86,13 +97,13 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <Button mt={4} colorScheme="teal" type="submit" isLoading={isLoading}>
+          <Button mt={4} colorScheme="blue" type="submit" isLoading={isLoading}>
             Log In
           </Button>
           {error && <FormErrorMessage>{error}</FormErrorMessage>}
         </form>
       )}
-    </div>
+    </Box>
   );
 }
 
