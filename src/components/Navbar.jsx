@@ -27,41 +27,46 @@ const Navbar = () => {
 
   return (
     <Box>
-      <Flex p="4" alignItems="center">
+      <Flex pt={'1.5em'} pb={'1.5em'} alignItems="center" bgColor={"#0077b6"}>
         {/* this is the logo, probably need to replace this code with an svg of the logo and the text inside instead*/}
-        <Box display={"flex"} alignItems={"center"}>
+        <Box display={"flex"} alignItems={"center"} ml={"5em"}>
           <Image src={RiverhawkLogo} width={"5%"} height={"auto"}></Image>
           <Link to="/">
-            <Text fontWeight={"bold"}>Riverhawk Homes</Text>
+            <Text color={"white"} fontWeight={"bold"}>
+              Riverhawk Homes
+            </Text>
           </Link>
         </Box>
         <Spacer />
-        {!isLoggedIn && (
-          <Box marginRight={"1em"}>
-            <Link to="/login">
-              <Text fontWeight={"600"}>Login</Text>
-            </Link>
-          </Box>
-        )}
-        {!isLoggedIn && (
-          <Box
-            border={"2px solid #0067B1"}
-            borderRadius={"8px"}
-            p={1}
-            fontWeight={"600"}
-            color="#0067B1"
-            transition={"all 0.3s ease-out"}
-            _hover={{
-              bg: "#0067B1",
-              color: "white",
-              transition: "all 0.3s",
-            }}
-          >
-            <Link to="/signup">
-              <Text>Sign Up</Text>
-            </Link>
-          </Box>
-        )}
+        <Box display={'flex'} alignItems={'center'} mr={'5em'}>
+          {!isLoggedIn && (
+            <Box marginRight={"1em"}>
+              <Link to="/login">
+                <Text color={'white'} fontWeight={"600"}>Login</Text>
+              </Link>
+            </Box>
+          )}
+          {!isLoggedIn && (
+            <Box
+              border={"2px solid white"}
+              borderRadius={"8px"}
+              p={1}
+              fontWeight={"600"}
+              color="white"
+              transition={"all 0.3s ease-out"}
+              _hover={{
+                bg: "white",
+                color: "#0077b6",
+                transition: "all 0.3s",
+              }}
+            >
+              <Link to="/signup">
+                <Text>Sign Up</Text>
+              </Link>
+            </Box>
+          )}
+        </Box>
+
         {isLoggedIn && displayName && (
           <Box marginRight={"1em"}>
             <Link to="/profile">{displayName}</Link>

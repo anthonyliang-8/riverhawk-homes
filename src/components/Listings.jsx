@@ -96,7 +96,7 @@ function Listings() {
   };
 
   return (
-    <Flex>
+    <Flex ml={'5em'} mr={'5em'} mb={'3em'}>
       {/* flexbox for filter component */}
       <Box
         display={"flex"}

@@ -25,25 +25,25 @@ const Contact = () => {
   };
 
   return (
-    <Flex align="center" justify="center" m={5}>
-      <Box bg="gray.100" p={8} borderRadius={8} boxShadow="md">
+    <Flex align="center" justify="center" mt={'3em'} mb={'3em'}>
+      <Box bg="#0077b6" color={'white'} p={8} borderRadius={8} boxShadow="md">
         <Heading mb={6}>Contact Us</Heading>
         <form onSubmit={handleSubmit}>
           <FormControl mb={4}>
             <FormLabel htmlFor="firstName">First Name:</FormLabel>
-            <Input id="firstName" name="firstName" required />
+            <Input bgColor={'white'} color={'black'} id="firstName" name="firstName" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="lastName">Last Name:</FormLabel>
-            <Input id="lastName" name="lastName" required />
+            <Input bgColor={'white'} color={'black'} id="lastName" name="lastName" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="email">Email:</FormLabel>
-            <Input id="email" name="email" type="email" required />
+            <Input bgColor={'white'} color={'black'} id="email" name="email" type="email" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="message">Message:</FormLabel>
-            <Textarea id="message" name="message" rows={4} required />
+            <Textarea bgColor={'white'} color={'black'} id="message" name="message" rows={4} required />
           </FormControl>
           <Button type="submit" colorScheme="blue">
             Submit
