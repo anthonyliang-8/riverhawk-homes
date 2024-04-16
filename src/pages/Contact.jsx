@@ -61,39 +61,26 @@ const Contact = () => {
 
 
   return (
-    <Flex align="center" justify="center" m={5}>
-      <Box bg="gray.100" p={8} borderRadius={8} minW={'sm'} boxShadow="md">
-        <Heading color={'#0077B6'} mb={6}>Contact Us</Heading>
+
+    <Flex align="center" justify="center" mt={'3em'} mb={'3em'}>
+      <Box bg="#0077b6" color={'white'} p={8} borderRadius={8} boxShadow="md">
+        <Heading mb={6}>Contact Us</Heading>
         <form onSubmit={handleSubmit}>
           <FormControl mb={4}>
             <FormLabel htmlFor="firstName">First Name:</FormLabel>
-            <Input
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              borderWidth={'2px'}
-              required
-            />
+            <Input bgColor={'white'} color={'black'} id="firstName" name="firstName" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="lastName">Last Name:</FormLabel>
-            <Input id="lastName" name="lastName" value={formData.lastName}
-              borderWidth={'2px'}
-              onChange={handleChange} required />
+            <Input bgColor={'white'} color={'black'} id="lastName" name="lastName" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="email">Email:</FormLabel>
-            <Input id="email" name="email" type="email" value={formData.email}
-              borderWidth={'2px'}
-              onChange={handleChange} required />
+            <Input bgColor={'white'} color={'black'} id="email" name="email" type="email" required />
           </FormControl>
           <FormControl mb={4}>
             <FormLabel htmlFor="message">Message:</FormLabel>
-            <Textarea id="message" name="message" maxH={'sm'} rows={4}
-              value={formData.message}
-              borderWidth={'2px'}
-              onChange={handleChange} required />
+            <Textarea bgColor={'white'} color={'black'} id="message" name="message" rows={4} required />
           </FormControl>
           <Button type="submit" colorScheme="blue">
             Submit

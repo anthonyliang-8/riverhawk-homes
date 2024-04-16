@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <Container display={"flex"} justifyContent={"center"} mt={5}>
+    <Box display={"flex"} alignItems={'center'} justifyContent={"center"} bg={'#0077b6'} pt={'1.5em'} pb={'1.5em'}>
       <Box mr={5}>
-        <Link to="/about-us">About Us</Link>
+        <Link to="/about-us"><Text color={'white'} fontWeight={'600'}>About Us</Text></Link>
       </Box>
-      <Link to="/contact">Contact</Link>
-    </Container>
+      <Link to="/contact"><Text color={'white'} fontWeight={'600'}>Contact</Text></Link>
+    </Box>
   );
 }
 

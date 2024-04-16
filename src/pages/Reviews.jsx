@@ -31,7 +31,8 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Checkbox
+  Checkbox,
+  useToast,
 } from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
@@ -50,6 +51,7 @@ function Reviews() {
   );
   const [selectedImage, setSelectedImage] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const toast = useToast();
 
   const [selectedStars, setSelectedStars] = useState([]);
   const [filteredReviews, setFilteredReviews] = useState([]);
@@ -123,35 +125,44 @@ function Reviews() {
     }
   };
 
-  const updateFilter = (stars) => { // function to display only the filtered reviews
+  const updateFilter = (stars) => {
+    // function to display only the filtered reviews
     if (stars.length === 0) {
       setFilteredReviews(reviews);
     } else {
-      const filteredReviews = reviews.filter(review => stars.includes(parseInt(review.rating)));
+      const filteredReviews = reviews.filter((review) =>
+        stars.includes(parseInt(review.rating))
+      );
       setFilteredReviews(filteredReviews);
     }
   };
 
-  const updateCheckbox = (star) => { // function to keep track of which filters are checked/unchecked
+  const updateCheckbox = (star) => {
+    // function to keep track of which filters are checked/unchecked
     const updatedStars = [...selectedStars];
     const index = updatedStars.indexOf(star);
     if (index === -1) {
       updatedStars.push(star);
-    } else { 
+    } else {
       updatedStars.splice(index, 1);
     }
 
     setSelectedStars(updatedStars);
-  }
+  };
 
   useEffect(() => {
     updateFilter(selectedStars);
   }, [selectedStars]);
 
-  const drawCheckboxes = () => { // function to draw the checkboxes with the needed functionality for filtering
+  const drawCheckboxes = () => {
+    // function to draw the checkboxes with the needed functionality for filtering
     const checkboxes = [];
     for (let i = 1; i <= 5; i++) {
-        checkboxes.push( <Checkbox key={i} onChange={() => updateCheckbox(i)}>{i} Star</Checkbox> );
+      checkboxes.push(
+        <Checkbox key={i} onChange={() => updateCheckbox(i)}>
+          {i} Star
+        </Checkbox>
+      );
     }
 
     return checkboxes;
@@ -223,10 +234,10 @@ function Reviews() {
       if (dormSnapshot.exists()) {
         const dormData = dormSnapshot.data();
 
-        if ((dormData.entries - 1) === 0) {
+        if (dormData.entries - 1 === 0) {
           await updateDoc(dormDocRef, {
             rating: 0,
-            entries: 0
+            entries: 0,
           });
         } else {
           var newAvg =
@@ -345,24 +356,48 @@ can be displayed*/
           </Container>
 
           <Button colorScheme="blue">
-            <Link to={`/dorm/${id}/rate`}>Rate </Link>
+            <Link
+              to={`/dorm/${id}/rate`}
+              onClick={(e) => {
+                if (!currentUID) {
+                  e.preventDefault();
+                  toast({
+                    title: "Error: ",
+                    description: "Please log in to rate this dorm.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                }
+              }}
+            >
+              Rate
+            </Link>
           </Button>
         </Container>
       </Box>
       <Box display="flex" flexDirection="column" alignItems="flex-start">
-        <Box display={'flex'}
-          flexDir={'column'}
-          border={'1px solid grey'}
-          position={'absolute'}
-          left={'0'}
-          mt={'0'}
-          ml={'3vw'}
-          maxW={'md'}
-          px={'1.5vw'}
-          py={'1vw'}
-          rounded="md">
-            <Text borderBottom={"1px solid lightgrey"} mb={'0.5vw'} fontSize={'1.4em'}>Filter Reviews</Text>
-            {drawCheckboxes()}
+        <Box
+          display={"flex"}
+          flexDir={"column"}
+          border={"1px solid grey"}
+          position={"absolute"}
+          left={"0"}
+          mt={"0"}
+          ml={"3vw"}
+          maxW={"md"}
+          px={"1.5vw"}
+          py={"1vw"}
+          rounded="md"
+        >
+          <Text
+            borderBottom={"1px solid lightgrey"}
+            mb={"0.5vw"}
+            fontSize={"1.4em"}
+          >
+            Filter Reviews
+          </Text>
+          {drawCheckboxes()}
         </Box>
       </Box>
       {/* Review components are mapped and displayed here */}

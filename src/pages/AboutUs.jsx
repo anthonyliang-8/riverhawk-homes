@@ -2,7 +2,7 @@ import React from "react";
 import anthony from "../img/anthony.jpg";
 import dylan from "../img/dylan.jpg";
 import kevin from "../img/kevin.jpg";
-import kristina from "../img/kristina.jpg"
+import kristina from "../img/kristina.jpg";
 import {
   Box,
   Flex,
@@ -16,16 +16,17 @@ import {
 const AboutUs = () => {
   return (
     <div>
-      <Box bg="gray.100" py={8} mt={8}>
-        <Heading as="h1" textAlign="center" mb={4}>
+      <Box bg="#0067B1" py={8} mt={8}>
+        <Heading color={"white"} as="h1" textAlign="center" mb={4}>
           About Us
         </Heading>
-        <Text textAlign="center" maxW="600px" mx="auto">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        <Text color={'white'} fontWeight={500} textAlign="center" maxW="50%" mt={'2em'} mx="auto">
+          Our goal is to create an online space where incoming, current, and
+          past students are able to view and leave reviews about their living
+          experiences for various dorms on campus.
         </Text>
       </Box>
-      <Flex justifyContent={"center"} mt={8}>
+      <Flex justifyContent={"center"} mt={10}>
         <Box
           display={"flex"}
           flexDir={"column"}
@@ -45,8 +46,7 @@ const AboutUs = () => {
           </Heading>
           <Divider mb={2} />
           <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Senior studying Computer Science with interests in web development and computer graphics.
           </Text>
         </Box>
         <Box
