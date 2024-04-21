@@ -4,6 +4,7 @@
 ## About
 A web application that allows incoming, current, or past students a way to leave and look at reviews for dorms provided by UMass Lowell.
 ## Stack
+[![Stack](https://skillicons.dev/icons?i=react,vite,firebase)](https://skillicons.dev)
 React.js
 
 Chakra UI 
