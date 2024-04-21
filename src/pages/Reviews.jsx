@@ -33,7 +33,8 @@ import {
   ModalCloseButton,
   Checkbox,
   useToast,
-  Stack
+  Stack,
+  Spinner
 } from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
@@ -323,7 +324,9 @@ can be displayed*/
 
   // !! TODO: Replace with spinner, this is just temporary to show routing
   if (!reviewListings) {
-    return <div>Loading...</div>;
+    return (
+      <Box top={'50%'} textAlign={'center'}><Spinner size={'xl'}/></Box>
+  );
   }
 
   const rndDormRating = (rating) => {
