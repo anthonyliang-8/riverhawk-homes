@@ -16,7 +16,7 @@ const ReviewStars = ({ rating }) => {
     />
   ));
 
-  return <Box display={"flex"}>{stars}</Box>;
+  return <Box display={"flex"} alignItems={'center'}>{stars}</Box>;
 };
 
 export default ReviewStars;

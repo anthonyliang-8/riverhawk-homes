@@ -363,9 +363,9 @@ can be displayed*/
             <Text>{reviewListings.campus} Campus</Text>
             <Text>Price Range: ${reviewListings.price}</Text>
             <Stack direction="row">
-            <ReviewStars rating={rndDormRating(reviewListings.rating)} />
-            <Text>{reviewListings.rating}</Text>
-          </Stack>
+              <ReviewStars rating={rndDormRating(reviewListings.rating)} />
+              <Text>{reviewListings.rating}</Text>
+            </Stack>
           </Container>
 
           <Button colorScheme="blue">
@@ -425,9 +425,11 @@ can be displayed*/
           {/* Title for review */}
           <Text fontWeight="bold">{review.title}</Text>
           <Divider mt={".3em"} mb={".3m"} />
-          <Box mt={".3em"} mb={".5em"}>
+          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} mt={".3em"} mb={".5em"}>
             <ReviewStars rating={parseInt(review.rating)} />
+            <Text>Dorm type: <Text as={'b'}> {review.selectedOption}</Text></Text>
           </Box>
+
           {/* Review description text*/}
           <Text mb={".5em"}>{review.description}</Text>
           <Box display={"flex"} flexDir={"row"} overflowX={"auto"}>

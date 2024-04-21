@@ -9,6 +9,7 @@ import {
   FormControl,
   FormLabel,
   useToast, // Import useToast from Chakra UI
+  Select
 } from "@chakra-ui/react";
 import { storage, db, auth } from "../Firebase"; // Import auth from Firebase
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -49,6 +50,7 @@ const RatingForm = () => {
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for authentication
+  const [selectedOption, setSelectedOption] = useState(""); // State for selected dropdown option
   const toast = useToast();
 
   useEffect(() => {
@@ -110,6 +112,7 @@ const RatingForm = () => {
         description,
         imageUrls,
         rating,
+        selectedOption
       });
       console.log("Review added with ID:", newReview.id);
       await updateAvgRating(db, id, parseInt(rating)); // update avg rating of dorm
@@ -146,6 +149,19 @@ const RatingForm = () => {
             value={rating}
             onChange={(newRating) => setRating(newRating)}
           />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel>How many residents?</FormLabel>
+          <Select
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+          >
+            <option value="Single">Single</option>
+            <option value="Double">Double</option>
+            <option value="Triple">Triple</option>
+            <option value="Quad">Quad</option>
+            <option value="Other">Other</option>
+          </Select>
         </FormControl>
         <FormControl mb={4}>
           <FormLabel>Review Description</FormLabel>
