@@ -33,6 +33,7 @@ import {
   ModalCloseButton,
   Checkbox,
   useToast,
+  Stack
 } from "@chakra-ui/react";
 import { Trash, ThumbsDown, ThumbsUp, Warning } from "@phosphor-icons/react";
 
@@ -325,6 +326,15 @@ can be displayed*/
     return <div>Loading...</div>;
   }
 
+  const rndDormRating = (rating) => {
+    var decimal = parseFloat(rating) % 1; // grab the decimal portion of the #
+    if (decimal >= 0.5) {
+      return parseInt(rating) + 1;
+    }
+
+    return parseInt(rating);
+  }
+
   return (
     <Container minH="100vh">
       {/* !! This first Box is to store the basic info about the dorm itself */}
@@ -352,7 +362,10 @@ can be displayed*/
             <Divider />
             <Text>{reviewListings.campus} Campus</Text>
             <Text>Price Range: ${reviewListings.price}</Text>
-            <Text>Avg. Rating: {reviewListings.rating}</Text>
+            <Stack direction="row">
+            <ReviewStars rating={rndDormRating(reviewListings.rating)} />
+            <Text>{reviewListings.rating}</Text>
+          </Stack>
           </Container>
 
           <Button colorScheme="blue">
