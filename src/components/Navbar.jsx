@@ -72,7 +72,7 @@ const Navbar = () => {
 
         {isLoggedIn && displayName && (
           <Box marginRight={"1em"}>
-            <Link to="/profile">{displayName}</Link>
+            <Link to="/profile"><Text color={'white'} fontWeight={'600'}>{displayName}</Text></Link>
           </Box>
         )}
       </Flex>
