@@ -127,8 +127,7 @@ function Reviews() {
     }
   };
 
-  const updateFilter = (stars) => {
-    // function to display only the filtered reviews
+  const starsFilter = (stars) => { // old update filter function, used to handle specific stars
     if (stars.length === 0) {
       setFilteredReviews(reviews);
     } else {
@@ -139,18 +138,60 @@ function Reviews() {
     }
   };
 
-  const updateCheckbox = (star) => {
-    // function to keep track of which filters are checked/unchecked
-    const updatedStars = [...selectedStars];
-    const index = updatedStars.indexOf(star);
-    if (index === -1) {
-      updatedStars.push(star);
-    } else {
-      updatedStars.splice(index, 1);
+  const highToLow = () => {
+    const filteredReviews = reviews.sort((a, b) => b.rating - a.rating);
+    setFilteredReviews(filteredReviews);
+  }
+
+  const lowToHigh = () => {
+    const filteredReviews = reviews.sort((a, b) => a.rating - b.rating);
+    setFilteredReviews(filteredReviews);
+  }
+
+  const updateFilter = (stars) => { // edited function to handle highest -> lowest + vice versa
+    // function for high to low checked
+    if (stars.includes(6)) {
+      // sets a temp arr copy, finds index locat of 6 in arr, remove 6 from arr
+      const splicedStars = [...stars];
+      const index = splicedStars.indexOf(6);
+      splicedStars.splice(index, 1);
+      highToLow();
+      
+      // if there are no other filters, stop here
+      if (splicedStars.length === 0) {
+        return;
+      }
+      // if there are other filters, handle them
+      starsFilter(splicedStars);
+      return;
+    } else if (stars.includes(7)) { // function for low to high checked
+        const splicedStars = [...stars];
+        const index = splicedStars.indexOf(7);
+        splicedStars.splice(index, 1);
+        lowToHigh();
+
+        if (splicedStars.length === 0) { // if this is 0, we don't want to do starsFilter()
+          return;
+        }
+        lowToHigh();
+        starsFilter(splicedStars);
+        return;
     }
 
-    setSelectedStars(updatedStars);
+    starsFilter(stars); // if no high->low / low->high chosen, just filter normally
   };
+
+  const updateCheckbox = (boxNum) => { // function to keep track of which filters are checked/unchecked
+    const selectedBoxes = [...selectedStars];
+    const index = selectedBoxes.indexOf(boxNum);
+    if (index === -1) {
+      selectedBoxes.push(boxNum);
+    } else { 
+      selectedBoxes.splice(index, 1);
+    }
+
+    setSelectedStars(selectedBoxes);
+  }
 
   useEffect(() => {
     updateFilter(selectedStars);
@@ -158,7 +199,7 @@ function Reviews() {
 
   const drawCheckboxes = () => {
     // function to draw the checkboxes with the needed functionality for filtering
-    const checkboxes = [];
+    let checkboxes = [];
     for (let i = 1; i <= 5; i++) {
       checkboxes.push(
         <Checkbox key={i} onChange={() => updateCheckbox(i)}>
@@ -166,7 +207,16 @@ function Reviews() {
         </Checkbox>
       );
     }
-
+    checkboxes.push(
+      <Checkbox key={6} onChange={() => updateCheckbox(6)}>
+        Highest to Lowest
+      </Checkbox>
+    );
+    checkboxes.push(
+      <Checkbox key={7} onChange={() => updateCheckbox(7)}>
+        Lowest to Highest
+      </Checkbox>
+    );
     return checkboxes;
   };
 
