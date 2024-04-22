@@ -127,8 +127,7 @@ function Reviews() {
     }
   };
 
-  const updateFilter = (stars) => {
-    // function to display only the filtered reviews
+  const starsFilter = (stars) => { // old update filter function, used to handle specific stars
     if (stars.length === 0) {
       setFilteredReviews(reviews);
     } else {
@@ -139,18 +138,47 @@ function Reviews() {
     }
   };
 
-  const updateCheckbox = (star) => {
-    // function to keep track of which filters are checked/unchecked
-    const updatedStars = [...selectedStars];
-    const index = updatedStars.indexOf(star);
-    if (index === -1) {
-      updatedStars.push(star);
+  const highToLow = () => {
+    const filteredReviews = reviews.sort((a, b) => b.rating - a.rating);
+    setFilteredReviews(filteredReviews);
+  }
+
+  const lowToHigh = () => {
+    const filteredReviews = reviews.sort((a, b) => a.rating - b.rating);
+    setFilteredReviews(filteredReviews);
+  }
+
+  const updateFilter = (stars) => {
+    let filteredReviews = [...reviews]; // create a copy of the original reviews array
+  
+    if (stars.includes(6)) {
+      filteredReviews = filteredReviews.sort((a, b) => b.rating - a.rating);
+    } else if (stars.includes(7)) { // Low to High
+      filteredReviews = filteredReviews.sort((a, b) => a.rating - b.rating);
     } else {
-      updatedStars.splice(index, 1);
+      filteredReviews = filteredReviews.filter((review) =>
+        stars.includes(parseInt(review.rating))
+      );
+    }
+  
+    if (stars.length === 0) {
+      setFilteredReviews(reviews); // !! here was the fix, reset to original reviews if they aren't checked
+    } else {
+      setFilteredReviews(filteredReviews);
+    }
+  };
+
+  const updateCheckbox = (boxNum) => { // function to keep track of which filters are checked/unchecked
+    const selectedBoxes = [...selectedStars];
+    const index = selectedBoxes.indexOf(boxNum);
+    if (index === -1) {
+      selectedBoxes.push(boxNum);
+    } else { 
+      selectedBoxes.splice(index, 1);
     }
 
-    setSelectedStars(updatedStars);
-  };
+    setSelectedStars(selectedBoxes);
+  }
 
   useEffect(() => {
     updateFilter(selectedStars);
@@ -158,7 +186,7 @@ function Reviews() {
 
   const drawCheckboxes = () => {
     // function to draw the checkboxes with the needed functionality for filtering
-    const checkboxes = [];
+    let checkboxes = [];
     for (let i = 1; i <= 5; i++) {
       checkboxes.push(
         <Checkbox key={i} onChange={() => updateCheckbox(i)}>
@@ -166,7 +194,16 @@ function Reviews() {
         </Checkbox>
       );
     }
-
+    checkboxes.push(
+      <Checkbox key={6} onChange={() => updateCheckbox(6)}>
+        Highest to Lowest
+      </Checkbox>
+    );
+    checkboxes.push(
+      <Checkbox key={7} onChange={() => updateCheckbox(7)}>
+        Lowest to Highest
+      </Checkbox>
+    );
     return checkboxes;
   };
 
