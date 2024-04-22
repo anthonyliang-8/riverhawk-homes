@@ -57,19 +57,19 @@ function Listings() {
 
   const updateFilter = (campuses, minPrice, maxPrice, ratingRange) => {
     let filteredDorms = dorms;
-
+  
     if (campuses.length > 0) {
       filteredDorms = filteredDorms.filter((dorm) =>
         campuses.includes(dorm.campus)
       );
     }
-
+  
     filteredDorms = filteredDorms.filter(
       (dorm) =>
         parseInt(dorm.price) >= parseInt(minPrice) &&
         parseInt(dorm.price) <= parseInt(maxPrice) &&
-        dorm.rating >= ratingRange[0] &&
-        dorm.rating <= ratingRange[1]
+        (ratingRange === undefined || 
+          (dorm.rating >= ratingRange[0] && dorm.rating <= ratingRange[1]))
     );
     setFilteredDorms(filteredDorms);
   };
@@ -112,6 +112,7 @@ function Listings() {
         maxH={"20em"}
         p={"1em"}
         rounded={"md"}
+        bgColor={''}
       >
         <Text
           borderBottom="1px solid lightgrey"
