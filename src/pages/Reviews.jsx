@@ -211,45 +211,40 @@ function Reviews() {
   const handleReaction = async (reviewId, reaction) => {
     try {
       const reviewDocRef = doc(db, "reviews", reviewId);
+      const reactionsRef = doc(db, "reviews", reviewId, "reactions", currentUID);
+  
       const reviewDoc = await getDoc(reviewDocRef);
-
+      const reactionDoc = await getDoc(reactionsRef);
+  
       if (reviewDoc.exists()) {
-        const reactionsRef = doc(
-          db,
-          "reviews",
-          reviewId,
-          "reactions",
-          currentUID
-        );
-        const reactionDoc = await getDoc(reactionsRef);
-
+        let { thumbsUp, thumbsDown } = reviewDoc.data();
+  
+        thumbsUp = thumbsUp || [];
+        thumbsDown = thumbsDown || [];
+  
+        let newReaction = null;
         let updatedReactions = {
-          thumbsUp: reviewDoc.data().thumbsUp || [],
-          thumbsDown: reviewDoc.data().thumbsDown || [],
+          thumbsUp,
+          thumbsDown,
         };
-
-        if (reactionDoc.exists()) {
-          // User has already reacted, remove their reaction
-          const existingReaction = reactionDoc.data().reaction;
-          if (existingReaction === "thumbsUp") {
-            updatedReactions.thumbsUp = updatedReactions.thumbsUp.filter(
-              (uid) => uid !== currentUID
-            );
-          } else if (existingReaction === "thumbsDown") {
-            updatedReactions.thumbsDown = updatedReactions.thumbsDown.filter(
-              (uid) => uid !== currentUID
-            );
+  
+        if (reactionDoc.exists() && reactionDoc.data().reaction === reaction) {
+          // user is toggling off their reaction
+          updatedReactions[reaction] = updatedReactions[reaction].filter(uid => uid !== currentUID);
+        } else {
+          // add new reaction or toggle to different reaction
+          if (reaction === "thumbsUp") {
+            updatedReactions.thumbsUp = [...new Set([...thumbsUp, currentUID])];
+            updatedReactions.thumbsDown = thumbsDown.filter(uid => uid !== currentUID);
+          } else if (reaction === "thumbsDown") {
+            updatedReactions.thumbsDown = [...new Set([...thumbsDown, currentUID])];
+            updatedReactions.thumbsUp = thumbsUp.filter(uid => uid !== currentUID);
           }
+          newReaction = reaction;
         }
-
-        if (reaction === "thumbsUp") {
-          updatedReactions.thumbsUp = arrayUnion(currentUID);
-        } else if (reaction === "thumbsDown") {
-          updatedReactions.thumbsDown = arrayUnion(currentUID);
-        }
-
-        await setDoc(reactionsRef, { reaction }, { merge: true });
+  
         await updateDoc(reviewDocRef, updatedReactions);
+        await setDoc(reactionsRef, { reaction: newReaction }, { merge: true });
       } else {
         console.log("No such review exists!");
       }
@@ -257,6 +252,7 @@ function Reviews() {
       console.error("Error handling reaction:", error);
     }
   };
+  
 
   /* !! function to handle removing the review */
   const deleteReview = async (reviewId, reviewRating) => {
