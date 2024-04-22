@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { auth } from "../Firebase";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -64,6 +64,40 @@ function Login() {
     }
   };
 
+  // function to handle password reset
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address to reset your password.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: "Email sent!",
+        description: "A link to reset your password if your email address exists.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      setError(error.message);
+      toast({
+        title: "Failed to Reset Password.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+
   return (
     <Box boxSize={'sm'} margin={'auto auto'} mt={'2em'} mb={'2em'}>
       <Box mb={"2em"}>
@@ -97,9 +131,14 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <Button mt={4} colorScheme="blue" type="submit" isLoading={isLoading}>
-            Log In
-          </Button>
+          <Box display={'flex'} alignItems={'center'} mt={5} justifyContent={'space-between'}>
+            <Button colorScheme="blue" type="submit" isLoading={isLoading}>
+              Log In
+            </Button>
+            <Button variant="link" onClick={handleResetPassword} colorScheme="blue">
+              Forgot Password?
+            </Button>
+          </Box>
           {error && <FormErrorMessage>{error}</FormErrorMessage>}
         </form>
       )}

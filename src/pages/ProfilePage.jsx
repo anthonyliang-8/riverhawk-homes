@@ -134,7 +134,7 @@ const ProfilePage = () => {
               </Button>
             </form>
             ) : (
-            <Button ml={4} size="xs" type="button" colorScheme="teal" 
+            <Button ml={4} size="xs" type="button" colorScheme="blue" 
               onClick={() => setHideNameForm(false)}>
               Change Name
             </Button>
@@ -147,7 +147,7 @@ const ProfilePage = () => {
       </Box>
 
       <Button mx="auto" mt={4} type="button"
-        colorScheme="teal" onClick={handleLogout} isLoading={isLoading}>
+        colorScheme='blue' onClick={handleLogout} isLoading={isLoading}>
           Logout
       </Button>
     </Box>
