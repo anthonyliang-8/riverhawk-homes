@@ -14,7 +14,6 @@ import {
   RangeSliderFilledTrack,
   RangeSliderThumb,
 } from "@chakra-ui/react";
-import { Check } from "@phosphor-icons/react";
 
 function Listings() {
   const [dorms, setDorms] = useState([]);
@@ -57,18 +56,18 @@ function Listings() {
 
   const updateFilter = (campuses, minPrice, maxPrice, ratingRange) => {
     let filteredDorms = dorms;
-  
+
     if (campuses.length > 0) {
       filteredDorms = filteredDorms.filter((dorm) =>
         campuses.includes(dorm.campus)
       );
     }
-  
+
     filteredDorms = filteredDorms.filter(
       (dorm) =>
         parseInt(dorm.price) >= parseInt(minPrice) &&
         parseInt(dorm.price) <= parseInt(maxPrice) &&
-        (ratingRange === undefined || 
+        (ratingRange === undefined ||
           (dorm.rating >= ratingRange[0] && dorm.rating <= ratingRange[1]))
     );
     setFilteredDorms(filteredDorms);
@@ -101,70 +100,77 @@ function Listings() {
   return (
     <Flex ml={'5em'} mr={'5em'} mb={'3em'}>
       {/* flexbox for filter component */}
+
       <Box
         display={"flex"}
         flexDir={"column"}
-        border={"1px solid grey"}
+        border={"1px solid lightgrey"}
         mt={"3em"}
         mr={"3em"}
         minW={"16em"}
         minH={"10em"}
         maxH={"20em"}
-        p={"1em"}
-        rounded={"md"}
-        bgColor={''}
+        borderRadius={'6px'}
       >
+        {/* header for top of container */}
         <Text
-          borderBottom="1px solid lightgrey"
           fontSize="1.3em"
           fontWeight="600"
+          bgColor={'#0077b6'}
+          color={'white'}
+          borderTopRadius={'6px'}
+          p={'.5em'}
         >
           Filters
         </Text>
-        <Text fontWeight="600">Location</Text>
-        <Checkbox onChange={() => updateCheckboxes("North")}>
-          North Campus
-        </Checkbox>
-        <Checkbox onChange={() => updateCheckboxes("South")}>
-          South Campus
-        </Checkbox>
-        {/* probably need to implement filtering by rating/stars here */}
-        <Text mt="1em" fontWeight="600">
-          Price
-        </Text>
-        {/* slider to handle filtering the dorms by price */}
-        <RangeSlider
-          defaultValue={[8710, 12000]}
-          min={8710}
-          max={12000}
-          step={100}
-          onChange={(val) => updateMaxPrice(val)}
-        >
-          <RangeSliderTrack>
-            <RangeSliderFilledTrack />
-          </RangeSliderTrack>
-          <RangeSliderThumb index={0} />
-          <RangeSliderThumb index={1} />
-        </RangeSlider>
-        <Text>
-          ${currentPriceRange[0]} - ${currentPriceRange[1]}
-        </Text>
-        <Text mt="1em" fontWeight="600">Rating</Text>
-        <RangeSlider
-          defaultValue={[0, 5]}
-          min={0}
-          max={5}
-          step={0.1}
-          value={selectedRatingRange}
-          onChange={(val) => setSelectedRatingRange(val)}
-        >
-          <RangeSliderTrack>
-            <RangeSliderFilledTrack />
-          </RangeSliderTrack>
-          <RangeSliderThumb index={0} />
-          <RangeSliderThumb index={1} />
-        </RangeSlider>
-        <Text>Rating: {selectedRatingRange[0]} - {selectedRatingRange[1]}</Text>
+        <Box
+          p={'.5em'} display={'flex'}
+          flexDir={'column'}> {/* container for bottom of filter */}
+          <Text fontWeight="600">Location</Text>
+          <Checkbox onChange={() => updateCheckboxes("North")}>
+            North Campus
+          </Checkbox>
+          <Checkbox onChange={() => updateCheckboxes("South")}>
+            South Campus
+          </Checkbox>
+          {/* probably need to implement filtering by rating/stars here */}
+          <Text mt="1em" fontWeight="600">
+            Price
+          </Text>
+          {/* slider to handle filtering the dorms by price */}
+          <RangeSlider
+            defaultValue={[8710, 12000]}
+            min={8710}
+            max={12000}
+            step={100}
+            onChange={(val) => updateMaxPrice(val)}
+          >
+            <RangeSliderTrack>
+              <RangeSliderFilledTrack />
+            </RangeSliderTrack>
+            <RangeSliderThumb index={0} />
+            <RangeSliderThumb index={1} />
+          </RangeSlider>
+          <Text>
+            ${currentPriceRange[0]} - ${currentPriceRange[1]}
+          </Text>
+          <Text mt="1em" fontWeight="600">Rating</Text>
+          <RangeSlider
+            defaultValue={[0, 5]}
+            min={0}
+            max={5}
+            step={0.1}
+            value={selectedRatingRange}
+            onChange={(val) => setSelectedRatingRange(val)}
+          >
+            <RangeSliderTrack>
+              <RangeSliderFilledTrack />
+            </RangeSliderTrack>
+            <RangeSliderThumb index={0} />
+            <RangeSliderThumb index={1} />
+          </RangeSlider>
+          <Text>Rating: {selectedRatingRange[0]} - {selectedRatingRange[1]}</Text>
+        </Box>
       </Box>
 
       <Box
