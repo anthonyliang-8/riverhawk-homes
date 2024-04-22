@@ -38,11 +38,27 @@ function Listings() {
     }
   };
 
+  // added this function to deal with RHV's price range, since RHV's price is stored as a string var in the Firebase db
+  const parsePrice = (price) => {
+    if (typeof price === 'string' && price.includes('-')) {
+      const [min, max] = price.split('-').map(Number);
+      return { min, max };
+    } else {
+      const value = Number(price);
+      return { min: value, max: value };
+    }
+  };
+
   const updateFilter = () => {
     let filtered = dorms.filter(dorm => {
+      const { min: dormMinPrice, max: dormMaxPrice } = parsePrice(dorm.price);
+      const [filterMinPrice, filterMaxPrice] = currentPriceRange;
+
       const matchesCampus = selectedCampus.length === 0 || selectedCampus.includes(dorm.campus);
-      const matchesPrice = dorm.price >= currentPriceRange[0] && dorm.price <= currentPriceRange[1];
-      const matchesRating = selectedRatings.size === 0 || [...selectedRatings].some(rating => dorm.rating >= rating && dorm.rating < rating + 1);
+      const matchesPrice = dormMaxPrice >= filterMinPrice && dormMinPrice <= filterMaxPrice;
+      const matchesRating = selectedRatings.size === 0 || [...selectedRatings].some(rating =>
+        dorm.rating >= rating && dorm.rating < rating + 1);
+
       return matchesCampus && matchesPrice && matchesRating;
     });
     setFilteredDorms(filtered);
@@ -61,6 +77,17 @@ function Listings() {
     }
     setSelectedRatings(newRatings);
     updateFilter();
+  };
+
+  const updateCheckboxes = (campus) => {
+    const updatedCampus = [...selectedCampus];
+    const index = updatedCampus.indexOf(campus);
+    if (index === -1) {
+      updatedCampus.push(campus);
+    } else {
+      updatedCampus.splice(index, 1);
+    }
+    setSelectedCampus(updatedCampus);
   };
 
   return (

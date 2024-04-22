@@ -12,6 +12,7 @@ const Dorm = ({ id, name, campus, price_range, rating, photo }) => {
     return parseInt(rating);
   }
 
+
   return (
     <Link to={`/dorm/${id}`}>
     <Box
