@@ -149,7 +149,8 @@ function Listings() {
         display={"flex"}
         flexDir={"row"}
         flexWrap={"wrap"}
-        mt={"2em"}
+        mt={'2em'}
+        ml={'6em'}
         alignItems={"center"}
         justifyContent={"space-evenly"}
       >
