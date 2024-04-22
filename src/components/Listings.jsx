@@ -21,6 +21,7 @@ function Listings() {
   const [selectedCampus, setSelectedCampus] = useState([]);
   const [filteredDorms, setFilteredDorms] = useState([]);
   const [currentPriceRange, setCurrentPriceRange] = useState([8710, 12000]);
+  const [selectedRatingRange, setSelectedRatingRange] = useState([0, 5]);
 
   useEffect(() => {
     setFilteredDorms(dorms);
@@ -54,7 +55,7 @@ function Listings() {
     }
   };
 
-  const updateFilter = (campuses, minPrice, maxPrice) => {
+  const updateFilter = (campuses, minPrice, maxPrice, ratingRange) => {
     let filteredDorms = dorms;
 
     if (campuses.length > 0) {
@@ -66,7 +67,9 @@ function Listings() {
     filteredDorms = filteredDorms.filter(
       (dorm) =>
         parseInt(dorm.price) >= parseInt(minPrice) &&
-        parseInt(dorm.price) <= parseInt(maxPrice)
+        parseInt(dorm.price) <= parseInt(maxPrice) &&
+        dorm.rating >= ratingRange[0] &&
+        dorm.rating <= ratingRange[1]
     );
     setFilteredDorms(filteredDorms);
   };
@@ -86,8 +89,8 @@ function Listings() {
   };
 
   useEffect(() => {
-    updateFilter(selectedCampus, 8710, maxPrice);
-  }, [selectedCampus, maxPrice]);
+    updateFilter(selectedCampus, 8710, maxPrice, selectedRatingRange);
+  }, [selectedCampus, maxPrice, selectedRatingRange]);
 
   const updateMaxPrice = (range) => {
     const [minPrice, maxPrice] = range;
@@ -145,6 +148,22 @@ function Listings() {
         <Text>
           ${currentPriceRange[0]} - ${currentPriceRange[1]}
         </Text>
+        <Text mt="1em" fontWeight="600">Rating</Text>
+        <RangeSlider
+          defaultValue={[0, 5]}
+          min={0}
+          max={5}
+          step={0.1}
+          value={selectedRatingRange}
+          onChange={(val) => setSelectedRatingRange(val)}
+        >
+          <RangeSliderTrack>
+            <RangeSliderFilledTrack />
+          </RangeSliderTrack>
+          <RangeSliderThumb index={0} />
+          <RangeSliderThumb index={1} />
+        </RangeSlider>
+        <Text>Rating: {selectedRatingRange[0]} - {selectedRatingRange[1]}</Text>
       </Box>
 
       <Box
