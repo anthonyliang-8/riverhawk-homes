@@ -195,7 +195,7 @@ function Reviews() {
     let checkboxes = [];
     for (let i = 1; i <= 5; i++) {
       checkboxes.push(
-        <Checkbox key={i} onChange={() => updateCheckbox(i)}>
+        <Checkbox key={i} onChange={() => updateCheckbox(i)} style={{width: '100%', display: 'block'}}>
           {i} Star
         </Checkbox>
       );
@@ -441,18 +441,29 @@ can be displayed*/
           mt={"0"}
           ml={"3vw"}
           maxW={"md"}
-          px={"1.5vw"}
-          py={"1vw"}
+          pb={"1vw"}
           rounded="md"
         >
           <Text
-            borderBottom={"1px solid lightgrey"}
-            mb={"0.5vw"}
-            fontSize={"1.4em"}
+            fontSize="1.3em"
+            fontWeight="600"
+            bgColor={'#0077b6'}
+            color={'white'}
+            borderTopRadius={'6px'}
+            p={'.5em'}
           >
             Filter Reviews
           </Text>
-          {drawCheckboxes()}
+          <Box 
+            px={"1.5vw"}
+            py={".5vw"}
+            display={"flex"}
+            flexDir={"column"} 
+            maxW={"15em"}
+            alignItems={"center"}
+          >
+            {drawCheckboxes()}
+          </Box>
         </Box>
       </Box>
       {/* Review components are mapped and displayed here */}
