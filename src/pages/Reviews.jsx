@@ -148,37 +148,24 @@ function Reviews() {
     setFilteredReviews(filteredReviews);
   }
 
-  const updateFilter = (stars) => { // edited function to handle highest -> lowest + vice versa
-    // function for high to low checked
+  const updateFilter = (stars) => {
+    let filteredReviews = [...reviews]; // create a copy of the original reviews array
+  
     if (stars.includes(6)) {
-      // sets a temp arr copy, finds index locat of 6 in arr, remove 6 from arr
-      const splicedStars = [...stars];
-      const index = splicedStars.indexOf(6);
-      splicedStars.splice(index, 1);
-      highToLow();
-      
-      // if there are no other filters, stop here
-      if (splicedStars.length === 0) {
-        return;
-      }
-      // if there are other filters, handle them
-      starsFilter(splicedStars);
-      return;
-    } else if (stars.includes(7)) { // function for low to high checked
-        const splicedStars = [...stars];
-        const index = splicedStars.indexOf(7);
-        splicedStars.splice(index, 1);
-        lowToHigh();
-
-        if (splicedStars.length === 0) { // if this is 0, we don't want to do starsFilter()
-          return;
-        }
-        lowToHigh();
-        starsFilter(splicedStars);
-        return;
+      filteredReviews = filteredReviews.sort((a, b) => b.rating - a.rating);
+    } else if (stars.includes(7)) { // Low to High
+      filteredReviews = filteredReviews.sort((a, b) => a.rating - b.rating);
+    } else {
+      filteredReviews = filteredReviews.filter((review) =>
+        stars.includes(parseInt(review.rating))
+      );
     }
-
-    starsFilter(stars); // if no high->low / low->high chosen, just filter normally
+  
+    if (stars.length === 0) {
+      setFilteredReviews(reviews); // !! here was the fix, reset to original reviews if they aren't checked
+    } else {
+      setFilteredReviews(filteredReviews);
+    }
   };
 
   const updateCheckbox = (boxNum) => { // function to keep track of which filters are checked/unchecked
