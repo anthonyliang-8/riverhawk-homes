@@ -127,38 +127,44 @@ function Reviews() {
     }
   };
 
+  const filteredReviewsParse = (stars) => { // this line would've been used in a lot of places. function is to neaten code
+    return reviews.filter((review) => stars.includes(parseInt(review.rating)));
+  }
+
   const starsFilter = (stars) => { // old update filter function, used to handle specific stars
     if (stars.length === 0) {
       setFilteredReviews(reviews);
     } else {
-      const filteredReviews = reviews.filter((review) =>
-        stars.includes(parseInt(review.rating))
-      );
+      const filteredReviews = filteredReviewsParse(stars);
       setFilteredReviews(filteredReviews);
     }
   };
 
-  const highToLow = () => {
-    const filteredReviews = reviews.sort((a, b) => b.rating - a.rating);
-    setFilteredReviews(filteredReviews);
-  }
+  const highToLow = (filteredReviews) => { // used to neaten code again
+    return filteredReviews.sort((a, b) => b.rating - a.rating);
+  };
 
-  const lowToHigh = () => {
-    const filteredReviews = reviews.sort((a, b) => a.rating - b.rating);
-    setFilteredReviews(filteredReviews);
-  }
+  const lowToHigh = (filteredReviews) => {
+    return filteredReviews.sort((a, b) => a.rating - b.rating);
+  };
 
   const updateFilter = (stars) => {
     let filteredReviews = [...reviews]; // create a copy of the original reviews array
   
+    if (stars.includes(6) && (stars.length - 1) !== 0) { // if we have high->low and other filters.
+      filteredReviews = filteredReviewsParse(stars);
+      filteredReviews = highToLow(filteredReviews);
+    } else if (stars.includes(7) && (stars.length - 1) !== 0) { // if we have low->high and other filters
+      filteredReviews = filteredReviewsParse(stars);
+      filteredReviews = lowToHigh(filteredReviews);
+    }
+
     if (stars.includes(6)) {
-      filteredReviews = filteredReviews.sort((a, b) => b.rating - a.rating);
-    } else if (stars.includes(7)) { // Low to High
-      filteredReviews = filteredReviews.sort((a, b) => a.rating - b.rating);
+      filteredReviews = highToLow(filteredReviews);
+    } else if (stars.includes(7)) {
+      filteredReviews = lowToHigh(filteredReviews);
     } else {
-      filteredReviews = filteredReviews.filter((review) =>
-        stars.includes(parseInt(review.rating))
-      );
+      filteredReviews = filteredReviewsParse(stars);
     }
   
     if (stars.length === 0) {
@@ -189,7 +195,7 @@ function Reviews() {
     let checkboxes = [];
     for (let i = 1; i <= 5; i++) {
       checkboxes.push(
-        <Checkbox key={i} onChange={() => updateCheckbox(i)}>
+        <Checkbox key={i} onChange={() => updateCheckbox(i)} style={{width: '100%', display: 'block'}}>
           {i} Star
         </Checkbox>
       );
@@ -435,18 +441,29 @@ can be displayed*/
           mt={"0"}
           ml={"3vw"}
           maxW={"md"}
-          px={"1.5vw"}
-          py={"1vw"}
+          pb={"1vw"}
           rounded="md"
         >
           <Text
-            borderBottom={"1px solid lightgrey"}
-            mb={"0.5vw"}
-            fontSize={"1.4em"}
+            fontSize="1.3em"
+            fontWeight="600"
+            bgColor={'#0077b6'}
+            color={'white'}
+            borderTopRadius={'6px'}
+            p={'.5em'}
           >
             Filter Reviews
           </Text>
-          {drawCheckboxes()}
+          <Box 
+            px={"1.5vw"}
+            py={".5vw"}
+            display={"flex"}
+            flexDir={"column"} 
+            maxW={"15em"}
+            alignItems={"center"}
+          >
+            {drawCheckboxes()}
+          </Box>
         </Box>
       </Box>
       {/* Review components are mapped and displayed here */}
@@ -498,7 +515,6 @@ can be displayed*/
                 onClick={() => deleteReview(review.id, review.rating)}
               />
             )}
-            <Warning size={28} color="#0432ff" weight="duotone" />
             {/*on click should change colors, default should be black */}
             {currentUID ? (
               <>
