@@ -92,8 +92,7 @@ const AboutUs = () => {
           </Heading>
           <Divider mb={2} />
           <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            I'm a senior with a computer science major, and I'm interested in game dev, and various other things.
           </Text>
         </Box>
         <Box

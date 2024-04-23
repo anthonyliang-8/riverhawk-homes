@@ -515,7 +515,6 @@ can be displayed*/
                 onClick={() => deleteReview(review.id, review.rating)}
               />
             )}
-            <Warning size={28} color="#0432ff" weight="duotone" />
             {/*on click should change colors, default should be black */}
             {currentUID ? (
               <>
