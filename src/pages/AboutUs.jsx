@@ -114,8 +114,7 @@ const AboutUs = () => {
           </Heading>
           <Divider mb={2} />
           <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Senior CS Major with a focus on web development and AI. Hobbyist game developer as well.
           </Text>
         </Box>
       </Flex>
